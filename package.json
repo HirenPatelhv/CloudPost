@@ -141,5 +141,11 @@
     "typescript": "~5.7.2",
     "vite": "^6.2.0",
     "wait-on": "^9.1.0"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-darwin-arm64": "^4.62.4",
+    "@rollup/rollup-darwin-x64": "^4.62.4",
+    "@rollup/rollup-linux-x64-gnu": "^4.62.4",
+    "@rollup/rollup-win32-x64-msvc": "^4.62.4"
   }
 }

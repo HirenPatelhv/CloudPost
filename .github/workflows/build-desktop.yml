@@ -11,21 +11,27 @@ jobs:
   build-mac:
     name: Build macOS (Apple Silicon & Intel)
     runs-on: macos-latest
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: false
+      ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES: true
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: 22
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm install
+          npm install @rollup/rollup-darwin-arm64 @rollup/rollup-darwin-x64 --no-save
 
       - name: Build macOS DMG and ZIP
         run: npm run build:mac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload macOS Artifacts
         uses: actions/upload-artifact@v4
@@ -34,26 +40,31 @@ jobs:
           path: |
             dist_desktop/*.dmg
             dist_desktop/*.zip
-            dist_desktop/*.blockmap
 
   build-windows:
     name: Build Windows (.exe & portable)
     runs-on: windows-latest
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: false
+      ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES: true
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: 22
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm install
+          npm install @rollup/rollup-win32-x64-msvc --no-save
 
       - name: Build Windows Executables
         run: npm run build:win
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v4
@@ -61,4 +72,3 @@ jobs:
           name: CloudPost-Windows
           path: |
             dist_desktop/*.exe
-            dist_desktop/*.blockmap
