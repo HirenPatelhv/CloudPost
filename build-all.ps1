@@ -13,16 +13,16 @@ if (-not (Test-Path "node_modules")) {
 
 # 2. Run multi-platform build
 Write-Host "[2/4] Preparing icons and compiling web bundle..." -ForegroundColor Green
-Write-Host "[3/4] Packaging native desktop binaries for Windows, Linux, and macOS..." -ForegroundColor Green
+Write-Host "[3/4] Packaging native desktop binaries..." -ForegroundColor Green
 npm run build:all
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""
     Write-Host "==========================================================" -ForegroundColor Cyan
-    Write-Host "✓ SUCCESS! All distribution packages compiled to dist_desktop/:" -ForegroundColor Green
+    Write-Host "✓ SUCCESS! Compiled distribution packages in dist_desktop/:" -ForegroundColor Green
     Write-Host "  - Windows: CloudPost Setup 2.4.0.exe (Installer) & Portable.exe" -ForegroundColor White
     Write-Host "  - Linux:   CloudPost-2.4.0.AppImage & .deb" -ForegroundColor White
-    Write-Host "  - macOS:   CloudPost-2.4.0-mac.zip (unzip and run on Mac)" -ForegroundColor White
+    Write-Host "  - macOS:   Triggered via GitHub Actions on real macOS runners" -ForegroundColor Yellow
     Write-Host "==========================================================" -ForegroundColor Cyan
 } else {
     Write-Host "Build failed with exit code $LASTEXITCODE" -ForegroundColor Red
