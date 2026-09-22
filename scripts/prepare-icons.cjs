@@ -78,6 +78,29 @@ function ensureIcons() {
   if (fs.existsSync(icnsSource)) {
     fs.copyFileSync(icnsSource, path.join(distDir, 'icon.icns'));
   }
+
+  // Ensure POSIX execute permissions on helper binaries (for macOS and Linux)
+  if (process.platform !== 'win32') {
+    function chmodRecursive(dir) {
+      if (!fs.existsSync(dir)) return;
+      try {
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        for (const entry of entries) {
+          const fullPath = path.join(dir, entry.name);
+          try {
+            if (entry.isDirectory()) {
+              chmodRecursive(fullPath);
+            } else {
+              fs.chmodSync(fullPath, 0o755);
+            }
+          } catch (_) {}
+        }
+      } catch (_) {}
+    }
+    chmodRecursive(path.join(rootDir, 'node_modules', '.bin'));
+    chmodRecursive(path.join(rootDir, 'node_modules', 'app-builder-bin'));
+    chmodRecursive(path.join(rootDir, 'node_modules', '7zip-bin'));
+  }
 }
 
 ensureIcons();

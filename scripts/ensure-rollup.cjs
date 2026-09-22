@@ -1,20 +1,30 @@
 const fs = require('fs');
 const path = require('path');
 
-function ensureBinPermissions() {
-  if (process.platform === 'win32') return;
+function chmodRecursive(dir) {
+  if (!fs.existsSync(dir)) return;
   try {
-    const binDir = path.join(process.cwd(), 'node_modules', '.bin');
-    if (fs.existsSync(binDir)) {
-      const files = fs.readdirSync(binDir);
-      for (const file of files) {
-        try {
-          fs.chmodSync(path.join(binDir, file), 0o755);
-        } catch (_) {}
-      }
-      console.log('✓ Verified executable permissions on node_modules/.bin');
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      try {
+        if (entry.isDirectory()) {
+          chmodRecursive(fullPath);
+        } else {
+          fs.chmodSync(fullPath, 0o755);
+        }
+      } catch (_) {}
     }
   } catch (_) {}
+}
+
+function ensureBinPermissions() {
+  if (process.platform === 'win32') return;
+  const root = process.cwd();
+  chmodRecursive(path.join(root, 'node_modules', '.bin'));
+  chmodRecursive(path.join(root, 'node_modules', 'app-builder-bin'));
+  chmodRecursive(path.join(root, 'node_modules', '7zip-bin'));
+  console.log('✓ Verified executable permissions on electron build tooling (app-builder-bin, 7zip-bin, .bin)');
 }
 
 function ensureRollup() {

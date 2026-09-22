@@ -29,6 +29,8 @@ jobs:
           rm -f package-lock.json
           npm install
           chmod -R +x node_modules/.bin || true
+          chmod -R +x node_modules/app-builder-bin || true
+          chmod -R +x node_modules/7zip-bin || true
 
       - name: Build macOS DMG and ZIP
         run: npm run build:mac
