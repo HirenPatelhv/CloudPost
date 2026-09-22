@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "tsx server.ts",
     "desktop:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && cross-env ELECTRON_ENV=development electron .\"",
-    "build:react": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "build:react": "node scripts/ensure-rollup.cjs && vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "prebuild:desktop": "node scripts/prepare-icons.cjs",
     "build:desktop": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder && node scripts/stamp-exe-icon.cjs",
     "build:all": "node scripts/build-desktop.cjs",
@@ -19,7 +19,7 @@
     "build:mac:intel": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --mac --x64",
     "build:mac:universal": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --mac --universal",
     "build:mac:zip": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --mac zip",
-    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "build": "node scripts/ensure-rollup.cjs && vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
@@ -118,6 +118,7 @@
     "sharp": "^0.35.4"
   },
   "devDependencies": {
+    "@rollup/wasm-node": "^4.63.4",
     "@tailwindcss/vite": "^4.0.9",
     "@types/cors": "^2.8.17",
     "@types/d3": "^7.4.3",

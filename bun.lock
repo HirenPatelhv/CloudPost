@@ -20,6 +20,7 @@
         "sharp": "^0.35.4",
       },
       "devDependencies": {
+        "@rollup/wasm-node": "^4.63.4",
         "@tailwindcss/vite": "^4.0.9",
         "@types/cors": "^2.8.17",
         "@types/d3": "^7.4.3",
@@ -43,6 +44,12 @@
         "typescript": "~5.7.2",
         "vite": "^6.2.0",
         "wait-on": "^9.1.0",
+      },
+      "optionalDependencies": {
+        "@rollup/rollup-darwin-arm64": "^4.62.4",
+        "@rollup/rollup-darwin-x64": "^4.62.4",
+        "@rollup/rollup-linux-x64-gnu": "^4.62.4",
+        "@rollup/rollup-win32-x64-msvc": "^4.62.4",
       },
     },
   },
@@ -332,6 +339,8 @@
     "@rollup/rollup-win32-x64-gnu": ["@rollup/rollup-win32-x64-gnu@4.62.4", "", { "os": "win32", "cpu": "x64" }, "sha512-qPzHqdj9rfUD+w79dtE07zi/kFwKyCJqplp5K5ygeLTp7jLpAoc16OAH39HSmRC9UpozaecsleI8uAdEj6v2yw=="],
 
     "@rollup/rollup-win32-x64-msvc": ["@rollup/rollup-win32-x64-msvc@4.62.4", "", { "os": "win32", "cpu": "x64" }, "sha512-zD6NdeWEByGE9QF9vCrlJ5YQB4oq9q91kPZS37Jwj5hOkvR1lTBSpsKhKDw4IJtbQ35LsTS1HD9DZYGKIshU1Q=="],
+
+    "@rollup/wasm-node": ["@rollup/wasm-node@4.63.4", "", { "dependencies": { "@types/estree": "1.0.9" }, "optionalDependencies": { "@napi-rs/lzma-linux-x64-gnu": "1.5.1", "fsevents": "~2.3.2" }, "bin": { "rollup": "dist/bin/rollup" } }, "sha512-pXmzGQzpMazI9wL+5ifqPfIOR5FFblTWTPS/tIg/WXH8JpLYFbJsOq4UyL2RH2FNAnfPqoC28wgRLudGH66NPA=="],
 
     "@sindresorhus/is": ["@sindresorhus/is@4.6.0", "", {}, "sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw=="],
 
