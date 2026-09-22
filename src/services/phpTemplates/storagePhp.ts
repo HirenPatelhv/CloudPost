@@ -195,8 +195,40 @@ function ensureDatabaseTables($pdo) {
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
+        // 10. Desktop Application Releases & Distribution Table
+        $pdo->exec("CREATE TABLE IF NOT EXISTS cp_desktop_releases (
+            id VARCHAR(64) PRIMARY KEY,
+            version VARCHAR(32) NOT NULL,
+            version_code INT UNSIGNED NOT NULL,
+            channel VARCHAR(32) DEFAULT 'stable',
+            title VARCHAR(255) NOT NULL,
+            release_notes TEXT,
+            min_supported_version VARCHAR(32) DEFAULT '1.0.0',
+            is_mandatory TINYINT(1) DEFAULT 0,
+            is_active TINYINT(1) DEFAULT 1,
+            downloads_count INT UNSIGNED DEFAULT 0,
+            windows_url VARCHAR(1024),
+            windows_sha256 VARCHAR(64),
+            windows_size_bytes BIGINT UNSIGNED DEFAULT 0,
+            mac_url VARCHAR(1024),
+            mac_sha256 VARCHAR(64),
+            mac_size_bytes BIGINT UNSIGNED DEFAULT 0,
+            linux_url VARCHAR(1024),
+            linux_sha256 VARCHAR(64),
+            linux_size_bytes BIGINT UNSIGNED DEFAULT 0,
+            php_url VARCHAR(1024),
+            php_sha256 VARCHAR(64),
+            php_size_bytes BIGINT UNSIGNED DEFAULT 0,
+            uploaded_by VARCHAR(128) DEFAULT 'CloudPost Core Engineering',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_rel_ver (version),
+            INDEX idx_rel_active_code (is_active, version_code),
+            INDEX idx_rel_created (created_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
         // Auto-seed SaaS customers if empty
         seedInitialSaaSCustomers($pdo);
+        seedInitialDesktopReleases($pdo);
 
         $initialized = true;
     } catch (Throwable $e) {
@@ -224,6 +256,55 @@ function seedInitialSaaSCustomers($pdo) {
         }
     } catch (Throwable $e) {
         error_log("SaaS customer seeding note: " . $e->getMessage());
+    }
+}
+
+function seedInitialDesktopReleases($pdo) {
+    if (!$pdo) return;
+    try {
+        $stmt = $pdo->query("SELECT COUNT(*) as count FROM cp_desktop_releases");
+        $row = $stmt->fetch();
+        if ($row && intval($row['count']) === 0) {
+            $insert = $pdo->prepare("INSERT INTO cp_desktop_releases (
+                id, version, version_code, channel, title, release_notes,
+                min_supported_version, is_mandatory, is_active, downloads_count,
+                windows_url, windows_sha256, windows_size_bytes,
+                mac_url, mac_sha256, mac_size_bytes,
+                linux_url, linux_sha256, linux_size_bytes,
+                php_url, php_sha256, php_size_bytes,
+                uploaded_by, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE version=VALUES(version)");
+
+            $insert->execute([
+                'rel_v2_4_0',
+                '2.4.0',
+                20400,
+                'stable',
+                'CloudPost v2.4.0 - Collaborative Multi-Protocol Release',
+                '• Native Electron desktop container with 100% CORS-free HTTP execution.\n• Real-time SSE Streams, WebSocket Client & gRPC Protocol Explorer.\n• Local MySQL persistence & instant turnkey PHP shared hosting export.',
+                '1.0.0',
+                0,
+                1,
+                14820,
+                '/api/desktop/download/windows?format=exe',
+                '9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e',
+                88473600,
+                '/api/desktop/download/mac?format=dmg',
+                '7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a',
+                96468992,
+                '/api/desktop/download/linux?format=AppImage',
+                '5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e',
+                91226112,
+                '/api/php-export/download',
+                '2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b',
+                891289,
+                'CloudPost Core Engineering',
+                '2026-03-15 12:00:00'
+            ]);
+        }
+    } catch (Throwable $e) {
+        error_log("Desktop releases seeding note: " . $e->getMessage());
     }
 }
 
@@ -436,6 +517,23 @@ function getSaaSReportMetricsFromDb() {
             ['plan' => 'free', 'customer_count' => 1, 'revenue_contribution' => 0.00, 'requests_processed' => 45000, 'infra_cost' => 0.20]
         ]
     ];
+}
+
+// Desktop release query helpers
+function getDesktopReleases($limit = 50) {
+    $pdo = getDbConnection();
+    if ($pdo) {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM cp_desktop_releases ORDER BY version_code DESC, created_at DESC LIMIT ?");
+            $stmt->bindValue(1, intval($limit), PDO::PARAM_INT);
+            $stmt->execute();
+            $rows = $stmt->fetchAll();
+            if (!empty($rows)) {
+                return $rows;
+            }
+        } catch (Throwable $e) {}
+    }
+    return [];
 }
 `;
 }

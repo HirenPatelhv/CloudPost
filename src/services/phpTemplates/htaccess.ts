@@ -34,7 +34,10 @@ DirectoryIndex index.php index.html
     RewriteRule ^diagnostic/?$ diagnostic.php [L,QSA]
     RewriteRule ^test/?$ diagnostic.php [L,QSA]
     RewriteRule ^auth/?$ auth.php [L,QSA]
+    RewriteRule ^api/(.*)$ api.php [L,QSA]
     RewriteRule ^api/?$ api.php [L,QSA]
+    RewriteRule ^desktop/(.*)$ api.php [L,QSA]
+    RewriteRule ^desktop/?$ api.php [L,QSA]
 
     # 3. Generic fallback: If file without .php exists as .php file, route internally
     RewriteCond %{REQUEST_FILENAME} !-d

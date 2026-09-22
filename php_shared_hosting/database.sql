@@ -186,7 +186,56 @@ CREATE TABLE IF NOT EXISTS `cp_app_state` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Seed initial SaaS SuperAdmin user
+-- Table structure for table `cp_shares`
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `cp_shares` (
+  `id` VARCHAR(64) NOT NULL,
+  `type` VARCHAR(32) DEFAULT 'collection',
+  `title` VARCHAR(255) DEFAULT NULL,
+  `data_json` LONGTEXT DEFAULT NULL,
+  `postman_json` LONGTEXT DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_shares_type` (`type`),
+  KEY `idx_shares_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+-- Table structure for table `cp_desktop_releases`
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `cp_desktop_releases` (
+  `id` VARCHAR(64) NOT NULL,
+  `version` VARCHAR(32) NOT NULL,
+  `version_code` INT UNSIGNED NOT NULL,
+  `channel` VARCHAR(32) DEFAULT 'stable',
+  `title` VARCHAR(255) NOT NULL,
+  `release_notes` TEXT DEFAULT NULL,
+  `min_supported_version` VARCHAR(32) DEFAULT '1.0.0',
+  `is_mandatory` TINYINT(1) DEFAULT 0,
+  `is_active` TINYINT(1) DEFAULT 1,
+  `downloads_count` INT UNSIGNED DEFAULT 0,
+  `windows_url` VARCHAR(1024) DEFAULT NULL,
+  `windows_sha256` VARCHAR(64) DEFAULT NULL,
+  `windows_size_bytes` BIGINT UNSIGNED DEFAULT 0,
+  `mac_url` VARCHAR(1024) DEFAULT NULL,
+  `mac_sha256` VARCHAR(64) DEFAULT NULL,
+  `mac_size_bytes` BIGINT UNSIGNED DEFAULT 0,
+  `linux_url` VARCHAR(1024) DEFAULT NULL,
+  `linux_sha256` VARCHAR(64) DEFAULT NULL,
+  `linux_size_bytes` BIGINT UNSIGNED DEFAULT 0,
+  `php_url` VARCHAR(1024) DEFAULT NULL,
+  `php_sha256` VARCHAR(64) DEFAULT NULL,
+  `php_size_bytes` BIGINT UNSIGNED DEFAULT 0,
+  `uploaded_by` VARCHAR(128) DEFAULT 'CloudPost Core Engineering',
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_rel_ver` (`version`),
+  KEY `idx_rel_active_code` (`is_active`, `version_code`),
+  KEY `idx_rel_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+-- Seed initial SaaS SuperAdmin user & Desktop Release
 -- --------------------------------------------------------
 INSERT INTO `cp_users` (`id`, `name`, `email`, `password_hash`, `role`, `avatar`)
 VALUES ('usr_hiren_hv', 'Hiren Patel', 'hirenpatelhv@gmail.com', 'Micr0@1122', 'superadmin', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80')
@@ -195,5 +244,9 @@ ON DUPLICATE KEY UPDATE `password_hash` = VALUES(`password_hash`), `role` = VALU
 INSERT INTO `cp_saas_customers` (`id`, `user_id`, `name`, `email`, `company_name`, `role`, `plan`, `status`, `monthly_fee`, `total_requests`, `monthly_quota`, `requests_this_month`, `data_transfer_mb`, `total_cost`, `net_margin`, `net_margin_percent`, `health_score`, `country`)
 VALUES ('cust_hiren_hv', 'usr_hiren_hv', 'Hiren Patel', 'hirenpatelhv@gmail.com', 'CloudPost SaaS Enterprise', 'Workspace Architect & SuperAdmin', 'enterprise', 'active', 199.00, 1250000, 10000000, 1250000, 48500.00, 14.20, 184.80, 92.86, 100, 'United States')
 ON DUPLICATE KEY UPDATE `plan` = VALUES(`plan`), `status` = VALUES(`status`), `monthly_fee` = VALUES(`monthly_fee`);
+
+INSERT INTO `cp_desktop_releases` (`id`, `version`, `version_code`, `channel`, `title`, `release_notes`, `min_supported_version`, `is_mandatory`, `is_active`, `downloads_count`, `windows_url`, `windows_sha256`, `windows_size_bytes`, `mac_url`, `mac_sha256`, `mac_size_bytes`, `linux_url`, `linux_sha256`, `linux_size_bytes`, `php_url`, `php_sha256`, `php_size_bytes`, `uploaded_by`, `created_at`)
+VALUES ('rel_v2_4_0', '2.4.0', 20400, 'stable', 'CloudPost v2.4.0 - Collaborative Multi-Protocol Release', '• Native Electron desktop container with 100% CORS-free HTTP execution.\n• Real-time SSE Streams, WebSocket Client & gRPC Protocol Explorer.\n• Local MySQL persistence & instant turnkey PHP shared hosting export.', '1.0.0', 0, 1, 14820, '/api/desktop/download/windows?format=exe', '9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e', 88473600, '/api/desktop/download/mac?format=dmg', '7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a', 96468992, '/api/desktop/download/linux?format=AppImage', '5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e', 91226112, '/api/php-export/download', '2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b', 891289, 'CloudPost Core Engineering', '2026-03-15 12:00:00')
+ON DUPLICATE KEY UPDATE `version` = VALUES(`version`), `is_active` = VALUES(`is_active`);
 
 SET FOREIGN_KEY_CHECKS = 1;

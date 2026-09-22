@@ -28,6 +28,21 @@ window.electronAPI = {
   showOpenDialog: (options) => ipcRenderer.invoke('desktop:show-open-dialog', options),
   showSaveDialog: (options) => ipcRenderer.invoke('desktop:show-save-dialog', options),
   openExternal: (url) => ipcRenderer.invoke('desktop:open-external', url),
+  getVersion: () => ipcRenderer.invoke('desktop:get-version'),
+  checkForUpdates: () => ipcRenderer.invoke('desktop:check-update'),
+  onUpdateAvailable: (callback) => {
+    const handler = (_event, updateInfo) => {
+      try {
+        callback(updateInfo);
+      } catch (err) {
+        console.error('Error handling desktop update notification:', err);
+      }
+    };
+    ipcRenderer.on('desktop:update-available', handler);
+    return () => {
+      ipcRenderer.removeListener('desktop:update-available', handler);
+    };
+  },
   onMenuAction: (callback) => {
     const handler = (_event, action) => {
       try {

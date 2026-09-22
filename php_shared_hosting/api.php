@@ -22,6 +22,31 @@ require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/storage.php';
 
 $action = $_GET['action'] ?? '';
+$releaseId = null;
+
+// Support clean URLs for desktop release endpoints (e.g. /api/desktop/releases, /desktop/check-update)
+if (empty($action)) {
+    $requestUri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+    if (strpos($requestUri, 'desktop/check-update') !== false) {
+        $action = 'desktop_check_update';
+    } elseif (strpos($requestUri, 'desktop/releases') !== false) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (preg_match('#desktop/releases/([^/]+)/download#', $requestUri, $m)) {
+                $action = 'desktop_increment_download';
+                $releaseId = $m[1];
+            } else {
+                $action = 'desktop_publish_release';
+            }
+        } else {
+            $action = 'desktop_releases';
+        }
+    } elseif (strpos($requestUri, 'desktop/download') !== false) {
+        $action = 'desktop_download';
+        if (preg_match('#desktop/download/([^/?]+)#', $requestUri, $m)) {
+            $_GET['platform'] = $m[1];
+        }
+    }
+}
 $inputJSON = file_get_contents('php://input');
 $input = json_decode($inputJSON, true) ?: [];
 
@@ -784,7 +809,76 @@ if ($action === 'graphql_proxy' || (isset($input['action']) && $input['action'] 
     exit;
 }
 
-// 5. Default / Health status
+// ==============================================================================
+// 5. Desktop Application Releases & Distribution Endpoints
+// ==============================================================================
+
+if ($action === 'desktop_releases') {
+    header('Content-Type: application/json; charset=utf-8');
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $result = saveDesktopRelease($input);
+        if (empty($result['success'])) {
+            http_response_code(400);
+        }
+        echo json_encode($result);
+        exit;
+    }
+    $limit = intval($_GET['limit'] ?? 50);
+    $releases = getDesktopReleases($limit);
+    echo json_encode($releases);
+    exit;
+}
+
+if ($action === 'desktop_check_update') {
+    header('Content-Type: application/json; charset=utf-8');
+    $clientVersion = $_GET['version'] ?? '1.0.0';
+    $platform = $_GET['platform'] ?? 'win32';
+    $update = checkDesktopUpdate($clientVersion, $platform);
+    echo json_encode($update);
+    exit;
+}
+
+if ($action === 'desktop_publish_release') {
+    header('Content-Type: application/json; charset=utf-8');
+    $result = saveDesktopRelease($input);
+    if (empty($result['success'])) {
+        http_response_code(400);
+    }
+    echo json_encode($result);
+    exit;
+}
+
+if ($action === 'desktop_increment_download') {
+    header('Content-Type: application/json; charset=utf-8');
+    $relId = $releaseId ?? ($input['id'] ?? ($_GET['id'] ?? ''));
+    if (!empty($relId)) {
+        incrementDesktopDownload($relId);
+    }
+    echo json_encode(['success' => true]);
+    exit;
+}
+
+if ($action === 'desktop_download') {
+    $platform = strtolower($_GET['platform'] ?? 'windows');
+    $format = $_GET['format'] ?? 'exe';
+    $version = $_GET['version'] ?? '2.4.0';
+
+    $filename = "CloudPost-Setup-$version.exe";
+    if ($platform === 'windows' || $platform === 'win') {
+        $filename = ($format === 'zip') ? "CloudPost-Portable-$version.zip" : "CloudPost-Setup-$version.exe";
+    } elseif ($platform === 'mac' || $platform === 'darwin') {
+        $filename = ($format === 'zip') ? "CloudPost-macOS-$version.zip" : "CloudPost-$version.dmg";
+    } elseif ($platform === 'linux') {
+        $filename = ($format === 'deb') ? "cloudpost_{$version}_amd64.deb" : (($format === 'tar.gz') ? "cloudpost-{$version}.tar.gz" : "CloudPost-{$version}.AppImage");
+    }
+
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    echo "#!/usr/bin/env node\n/* CloudPost Desktop Standalone Launcher v$version */\nconsole.log('Launching CloudPost Desktop v$version for $platform...');\n";
+    exit;
+}
+
+// 6. Default / Health status
 echo json_encode([
     'status' => 'active',
     'service' => 'CloudPost PHP Request & Response Persistence Engine',
