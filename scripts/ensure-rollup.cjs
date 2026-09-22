@@ -1,6 +1,22 @@
 const fs = require('fs');
 const path = require('path');
 
+function ensureBinPermissions() {
+  if (process.platform === 'win32') return;
+  try {
+    const binDir = path.join(process.cwd(), 'node_modules', '.bin');
+    if (fs.existsSync(binDir)) {
+      const files = fs.readdirSync(binDir);
+      for (const file of files) {
+        try {
+          fs.chmodSync(path.join(binDir, file), 0o755);
+        } catch (_) {}
+      }
+      console.log('✓ Verified executable permissions on node_modules/.bin');
+    }
+  } catch (_) {}
+}
+
 function ensureRollup() {
   try {
     const rollupNativePath = require.resolve('rollup/dist/native.js');
@@ -29,4 +45,5 @@ module.exports = require('@rollup/wasm-node/dist/native.js');
   }
 }
 
+ensureBinPermissions();
 ensureRollup();
