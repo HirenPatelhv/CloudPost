@@ -1,0 +1,1 @@
+const fs = require('fs'); const code = fs.readFileSync('php_shared_hosting/index.php', 'utf8'); const scripts = code.matchAll(/<script>([\s\S]*?)<\/script>/g); for (const match of scripts) { try { new (require('vm').Script)(match[1]); console.log('Script OK'); } catch(e) { console.error('Error:', e); } }

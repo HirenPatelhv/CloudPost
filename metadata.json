@@ -1,0 +1,6 @@
+{
+  "name": "Postman Clone - Collaborative API Platform",
+  "description": "Enterprise-grade API client & collaborative platform featuring WebSockets real-time tester, Mock Server engine, GraphQL Explorer with schema introspection, Collection Monitors for SLA tracking, SaaS multi-tenant reporting, hierarchical collections, and multi-language code generation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

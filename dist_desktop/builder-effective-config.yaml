@@ -1,0 +1,62 @@
+directories:
+  output: dist_desktop
+  buildResources: build
+appId: com.cloudpost.desktop
+productName: CloudPost
+files:
+  - filter:
+      - dist/**/*
+      - electron/**/*
+      - public/**/*
+      - build/**/*
+      - package.json
+icon: build/icon.png
+win:
+  icon: build/icon.ico
+  target:
+    - nsis
+    - portable
+nsis:
+  oneClick: true
+  perMachine: false
+  allowToChangeInstallationDirectory: false
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  installerHeaderIcon: build/icon.ico
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: CloudPost
+mac:
+  icon: build/icon.icns
+  category: public.app-category.developer-tools
+  target:
+    - target: dmg
+      arch:
+        - arm64
+        - x64
+    - target: zip
+      arch:
+        - arm64
+        - x64
+  darkModeSupport: true
+  identity: null
+dmg:
+  title: CloudPost ${version}
+  contents:
+    - x: 130
+      'y': 220
+    - x: 410
+      'y': 220
+      type: link
+      path: /Applications
+  window:
+    width: 540
+    height: 380
+linux:
+  icon: build/icons
+  category: Development
+  target:
+    - AppImage
+    - deb
+    - tar.gz
+electronVersion: 30.5.1

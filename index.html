@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Postman Clone - Collaborative API Platform</title>
+    <meta name="description" content="Enterprise-grade API client & collaborative platform featuring WebSockets real-time tester, Mock Server engine, GraphQL Explorer with schema introspection, Collection Monitors for SLA tracking, SaaS multi-tenant reporting, hierarchical collections, and multi-language code generation." />
+    <meta property="og:title" content="Postman Clone - Collaborative API Platform" />
+    <meta property="og:description" content="Enterprise-grade API client & collaborative platform featuring WebSockets real-time tester, Mock Server engine, GraphQL Explorer with schema introspection, Collection Monitors for SLA tracking, SaaS multi-tenant reporting, hierarchical collections, and multi-language code generation." />
+    <meta property="og:url" content="https://cloudpost.techvisionstudio.in/" />
+    <link rel="canonical" href="https://cloudpost.techvisionstudio.in/" />
+    <link rel="icon" type="image/svg+xml" href="/icon-192.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-[#0f1117] text-[#e1e4ea] font-sans antialiased overflow-hidden selection:bg-orange-500/30 selection:text-orange-200">
+    <div id="root"></div>
+    <script>
+      // 1. Ensure .php extension is never displayed in the browser address bar
+      try {
+        if (window.location.pathname.endsWith('.php') || window.location.pathname.includes('.php/')) {
+          var cleanPath = window.location.pathname.replace(/\.php(\/|$)/, '$1') || '/';
+          window.history.replaceState(null, '', cleanPath + window.location.search + window.location.hash);
+        }
+      } catch (e) {}
+
+      // 2. Zero-Leak Status Bar: Ensure URL can never be displayed in status bar when hovering any anchor tag
+      window.defaultStatus = '';
+      document.addEventListener('mouseover', function(e) {
+        window.status = '';
+        var t = e.target && e.target.closest ? e.target.closest('a') : null;
+        if (t && t.hasAttribute('href') && !t.hasAttribute('data-real-href')) {
+          var realHref = t.getAttribute('href');
+          t.setAttribute('data-real-href', realHref);
+          t.removeAttribute('href');
+          t.style.cursor = 'pointer';
+          t.addEventListener('click', function(ev) {
+            ev.preventDefault();
+            if (realHref && realHref !== '#' && realHref.trim() !== '' && !realHref.startsWith('javascript:')) {
+              if (t.target === '_blank') {
+                window.open(realHref, '_blank', 'noopener,noreferrer');
+              } else {
+                window.location.href = realHref;
+              }
+            }
+          });
+        }
+      }, true);
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

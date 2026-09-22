@@ -1,0 +1,93 @@
+{
+  "CURRENT_USER": {
+    "id": "usr_hiren_101",
+    "name": "Hiren Patel",
+    "email": "hirenpatelhv@gmail.com",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+    "currentWorkspaceId": "ws_default_workspace",
+    "plan": "enterprise",
+    "isSaaSUser": true,
+    "companyName": "CloudPost Enterprise Labs",
+    "roleTitle": "Workspace Admin & Architect"
+  },
+  "INITIAL_PRESENCE": [
+    {
+      "userId": "usr_hiren_101",
+      "name": "Hiren Patel (You)",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      "color": "#f97316",
+      "currentAction": "Active in Workspace"
+    }
+  ],
+  "INITIAL_WORKSPACES": [
+    {
+      "id": "ws_default_workspace",
+      "name": "My Workspace",
+      "description": "Personal workspace for API development, testing, and debugging.",
+      "type": "PERSONAL",
+      "ownerId": "usr_hiren_101",
+      "createdAt": "2026-09-01T00:00:00Z",
+      "updatedAt": "2026-09-01T00:00:00Z",
+      "members": [
+        {
+          "userId": "usr_hiren_101",
+          "name": "Hiren Patel",
+          "email": "hirenpatelhv@gmail.com",
+          "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+          "role": "ADMIN",
+          "status": "ACTIVE",
+          "invitedAt": "2026-09-01T00:00:00Z",
+          "joinedAt": "2026-09-01T00:00:00Z"
+        }
+      ]
+    }
+  ],
+  "INITIAL_ENVIRONMENTS": [
+    {
+      "id": "env_dev",
+      "workspaceId": "ws_default_workspace",
+      "name": "Development",
+      "variables": [
+        {
+          "id": "v1",
+          "key": "baseUrl",
+          "value": "https://httpbin.org",
+          "initialValue": "https://httpbin.org",
+          "enabled": true,
+          "description": "Default API endpoint"
+        }
+      ],
+      "createdAt": "2026-09-01T00:00:00Z"
+    },
+    {
+      "id": "env_global",
+      "name": "Globals",
+      "isGlobal": true,
+      "variables": [
+        {
+          "id": "vg1",
+          "key": "appName",
+          "value": "CloudPost Studio",
+          "initialValue": "CloudPost Studio",
+          "enabled": true,
+          "description": "System application name"
+        }
+      ],
+      "createdAt": "2026-09-01T00:00:00Z"
+    }
+  ],
+  "INITIAL_COLLECTIONS": [
+    {
+      "id": "col_init_blank",
+      "workspaceId": "ws_default_workspace",
+      "name": "My API Collection",
+      "description": "Blank API collection ready for requests and folders.",
+      "createdAt": "2026-09-01T00:00:00Z",
+      "updatedAt": "2026-09-01T00:00:00Z",
+      "folders": [],
+      "requests": []
+    }
+  ],
+  "INITIAL_ACTIVITY_LOGS": [],
+  "INITIAL_RECENT_REQUESTS": []
+}

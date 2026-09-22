@@ -1,0 +1,196 @@
+
+        const applySandboxPreset = (p) => {
+            sandboxMethod.value = p.method;
+            sandboxUrl.value = p.url;
+            sandboxBody.value = p.body;
+        };
+
+        // HTTP Execution Engine with Automatic PHP Server Proxy Fallback for CORS
+        const executeHttpRequestJs = async (requestConfig, forceProxy = false) => {
+            const startTime = performance.now();
+            let rawUrl = resolveVariables(requestConfig.url || "");
+            if (!rawUrl.startsWith("http://") && !rawUrl.startsWith("https://")) {
+                rawUrl = "https://" + rawUrl;
+            }
+
+            let urlObj;
+            try {
+                urlObj = new URL(rawUrl);
+            } catch (e) {
+                try {
+                    urlObj = new URL("https://" + rawUrl.replace(/^https?:\/\//, ""));
+                } catch (err) {
+                    const duration = Math.round(performance.now() - startTime);
+                    return {
+                        status: 400,
+                        statusText: "Bad URL",
+                        headers: {},
+                        data: "Invalid URL: " + (requestConfig.url || ""),
+                        time: duration,
+                        size: 0,
+                        url: rawUrl,
+                        isError: true
+                    };
+                }
+            }
+
+            // Append enabled query parameters
+            if (requestConfig.params && Array.isArray(requestConfig.params)) {
+                requestConfig.params.forEach(p => {
+                    if (p.enabled && p.key && p.key.trim()) {
+                        urlObj.searchParams.set(resolveVariables(p.key.trim()), resolveVariables(p.value || ""));
+                    }
+                });
+            }
+
+            // Handle API Key in query parameter if configured
+            if ((requestConfig.auth && requestConfig.auth.type === "apiKey") && requestConfig.auth.apiKeyAddTo === "query" && requestConfig.auth.apiKeyName) {
+                urlObj.searchParams.set(resolveVariables(requestConfig.auth.apiKeyName), resolveVariables(requestConfig.auth.apiKeyValue || ""));
+            }
+
+            const targetUrl = urlObj.toString();
+
+            // Prepare Request Headers
+            const reqHeaders = {};
+            if (requestConfig.headers) {
+                if (Array.isArray(requestConfig.headers)) {
+                    requestConfig.headers.forEach(h => {
+                        if (h.enabled && h.key && h.key.trim()) {
+                            reqHeaders[resolveVariables(h.key.trim())] = resolveVariables(h.value || "");
+                        }
+                    });
+                } else if (typeof requestConfig.headers === "object") {
+                    Object.keys(requestConfig.headers).forEach(k => {
+                        if (requestConfig.headers[k]) reqHeaders[k] = resolveVariables(requestConfig.headers[k]);
+                    });
+                }
+            }
+
+            // Handle Auth Types
+            if ((requestConfig.auth && requestConfig.auth.type === "bearer") && requestConfig.auth.bearerToken) {
+                reqHeaders["Authorization"] = "Bearer " + resolveVariables(requestConfig.auth.bearerToken);
+            } else if ((requestConfig.auth && requestConfig.auth.type === "basic")) {
+                const u = resolveVariables(requestConfig.auth.basicUsername || "");
+                const p = resolveVariables(requestConfig.auth.basicPassword || "");
+                reqHeaders["Authorization"] = "Basic " + btoa(u + ":" + p);
+            } else if ((requestConfig.auth && requestConfig.auth.type === "apiKey") && requestConfig.auth.apiKeyAddTo === "header" && requestConfig.auth.apiKeyName) {
+                reqHeaders[resolveVariables(requestConfig.auth.apiKeyName)] = resolveVariables(requestConfig.auth.apiKeyValue || "");
+            }
+
+            // Prepare Request Body
+            let bodyPayload = undefined;
+            const method = (requestConfig.method || "GET").toUpperCase();
+            if (method !== "GET" && method !== "HEAD") {
+                if (typeof requestConfig.body === "string") {
+                    bodyPayload = resolveVariables(requestConfig.body);
+                    if (!reqHeaders["Content-Type"] && !reqHeaders["content-type"]) {
+                        reqHeaders["Content-Type"] = "application/json";
+                    }
+                } else if ((requestConfig.body && requestConfig.body.type === "json") && requestConfig.body.rawText) {
+                    bodyPayload = resolveVariables(requestConfig.body.rawText);
+                    if (!reqHeaders["Content-Type"] && !reqHeaders["content-type"]) {
+                        reqHeaders["Content-Type"] = "application/json";
+                    }
+                } else if ((requestConfig.body && requestConfig.body.type === "x-www-form-urlencoded")) {
+                    const formParams = new URLSearchParams();
+                    if (requestConfig.body.urlEncoded && Array.isArray(requestConfig.body.urlEncoded)) {
+                        requestConfig.body.urlEncoded.forEach(item => {
+                            if (item.enabled && item.key && item.key.trim()) {
+                                formParams.append(resolveVariables(item.key.trim()), resolveVariables(item.value || ""));
+                            }
+                        });
+                    }
+                    bodyPayload = formParams.toString();
+                    if (!reqHeaders["Content-Type"] && !reqHeaders["content-type"]) {
+                        reqHeaders["Content-Type"] = "application/x-www-form-urlencoded";
+                    }
+                } else if ((requestConfig.body && requestConfig.body.type === "raw") && requestConfig.body.rawText) {
+                    bodyPayload = resolveVariables(requestConfig.body.rawText);
+                }
+            }
+
+            // Direct fetch attempt
+            if (!forceProxy) {
+                try {
+                    const fetchOpts = {
+                        method: method,
+                        headers: reqHeaders,
+                        mode: "cors"
+                    };
+                    if (bodyPayload !== undefined) {
+                        fetchOpts.body = bodyPayload;
+                    }
+
+                    const response = await fetch(targetUrl, fetchOpts);
+                    const duration = Math.round(performance.now() - startTime);
+
+                    const respHeaders = {};
+                    response.headers.forEach((val, key) => {
+                        respHeaders[key] = val;
+                    });
+
+                    const responseText = await response.text();
+                    const responseSize = new Blob([responseText]).size;
+
+                    return {
+                        status: response.status,
+                        statusText: response.statusText || (response.ok ? "OK" : "HTTP " + response.status),
+                        headers: respHeaders,
+                        data: responseText,
+                        time: duration,
+                        size: responseSize,
+                        url: targetUrl,
+                        isError: false,
+                        isProxied: false
+                    };
+                } catch (err) {
+                    console.log("[Direct Fetch Blocked by CORS/Network - Retrying via PHP Backend Proxy]:", err.message);
+                }
+            }
+
+            // Automatic Server-Side PHP Proxy Fallback (Bypasses Browser CORS)
+            try {
+                const proxyResp = await fetch("api.php?action=proxy", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        url: targetUrl,
+                        method: method,
+                        headers: reqHeaders,
+                        body: bodyPayload
+                    })
+                });
+
+                if (proxyResp.ok) {
+                    const proxiedResult = await proxyResp.json();
+                    return proxiedResult;
+                }
+            } catch (proxyErr) {
+                console.error("[PHP Proxy Fetch Error]:", proxyErr);
+            }
+
+            const duration = Math.round(performance.now() - startTime);
+            return {
+                status: 0,
+                statusText: "Network / CORS Error",
+                headers: {},
+                data: "Request failed. Both direct browser request (CORS) and server-side PHP proxy were unavailable.",
+                time: duration,
+                size: 0,
+                url: targetUrl,
+                isError: true
+            };
+        };
+
+        const persistRequestAndResponseToPhp = async (reqObj, respObj) => {
+            try {
+                const historyEntry = {
+                    id: 'hist_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+                    workspaceId: activeWorkspaceId.value,
+                    name: reqObj.name || 'API Request',
+                    method: reqObj.method || 'GET',
+                    url: respObj.url || resolveVariables(reqObj.url || ''),
+                    statusCode: respObj.status || 0,
+                    responseTimeMs: respObj.time || 0,
+                    responseSizeBytes: respObj.size || 0,
+                    request: {

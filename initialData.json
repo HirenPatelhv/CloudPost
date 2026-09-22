@@ -1,0 +1,908 @@
+{
+  "CURRENT_USER": {
+    "id": "usr_hiren_101",
+    "name": "Hiren Patel",
+    "email": "hirenpatelhv@gmail.com",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+    "currentWorkspaceId": "ws_team_dev_core",
+    "plan": "enterprise",
+    "isSaaSUser": true,
+    "companyName": "CloudPost Enterprise Labs",
+    "roleTitle": "Workspace Admin & Architect"
+  },
+  "INITIAL_PRESENCE": [
+    {
+      "userId": "usr_hiren_101",
+      "name": "Hiren Patel (You)",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+      "color": "#f97316",
+      "currentAction": "Viewing Request Builder"
+    },
+    {
+      "userId": "usr_sarah_102",
+      "name": "Sarah Chen",
+      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80",
+      "color": "#3b82f6",
+      "currentAction": "Editing POST /auth/login",
+      "activeRequestId": "req_auth_login"
+    },
+    {
+      "userId": "usr_alex_103",
+      "name": "Alex Rivera",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+      "color": "#10b981",
+      "currentAction": "Running Collection Tests"
+    }
+  ],
+  "INITIAL_WORKSPACES": [
+    {
+      "id": "ws_personal_default",
+      "name": "Personal Workspace",
+      "description": "Private sandbox for quick API exploration, prototyping, and debugging.",
+      "type": "PERSONAL",
+      "ownerId": "usr_hiren_101",
+      "createdAt": "2026-08-10T09:00:00Z",
+      "updatedAt": "2026-08-18T10:00:00Z",
+      "members": [
+        {
+          "userId": "usr_hiren_101",
+          "name": "Hiren Patel",
+          "email": "hirenpatelhv@gmail.com",
+          "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+          "role": "ADMIN",
+          "status": "ACTIVE",
+          "invitedAt": "2026-08-10T09:00:00Z",
+          "joinedAt": "2026-08-10T09:00:00Z"
+        }
+      ]
+    },
+    {
+      "id": "ws_team_dev_core",
+      "name": "Core Engineering Team",
+      "description": "Shared engineering workspace with full CI/CD test collections and microservice endpoints.",
+      "type": "TEAM",
+      "ownerId": "usr_hiren_101",
+      "createdAt": "2026-08-12T14:30:00Z",
+      "updatedAt": "2026-08-18T10:45:00Z",
+      "members": [
+        {
+          "userId": "usr_hiren_101",
+          "name": "Hiren Patel",
+          "email": "hirenpatelhv@gmail.com",
+          "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
+          "role": "ADMIN",
+          "status": "ACTIVE",
+          "invitedAt": "2026-08-12T14:30:00Z",
+          "joinedAt": "2026-08-12T14:30:00Z"
+        },
+        {
+          "userId": "usr_sarah_102",
+          "name": "Sarah Chen",
+          "email": "sarah.chen@techcorp.io",
+          "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80",
+          "role": "EDITOR",
+          "status": "ACTIVE",
+          "invitedAt": "2026-08-13T10:15:00Z",
+          "joinedAt": "2026-08-13T11:00:00Z"
+        },
+        {
+          "userId": "usr_alex_103",
+          "name": "Alex Rivera",
+          "email": "alex.r@techcorp.io",
+          "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80",
+          "role": "VIEWER",
+          "status": "ACTIVE",
+          "invitedAt": "2026-08-14T08:20:00Z",
+          "joinedAt": "2026-08-14T09:40:00Z"
+        },
+        {
+          "userId": "usr_elena_104",
+          "name": "Elena Rostova",
+          "email": "elena.rostova@cloudscale.net",
+          "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=80",
+          "role": "EDITOR",
+          "status": "PENDING",
+          "invitedAt": "2026-08-17T16:00:00Z"
+        }
+      ]
+    }
+  ],
+  "INITIAL_ENVIRONMENTS": [
+    {
+      "id": "env_dev",
+      "workspaceId": "ws_team_dev_core",
+      "name": "Development",
+      "variables": [
+        {
+          "id": "v1",
+          "key": "baseUrl",
+          "value": "https://jsonplaceholder.typicode.com",
+          "initialValue": "https://jsonplaceholder.typicode.com",
+          "enabled": true,
+          "description": "Dev Mock REST API"
+        },
+        {
+          "id": "v2",
+          "key": "apiKey",
+          "value": "dev_key_sec_892314981",
+          "initialValue": "dev_key_sec_892314981",
+          "enabled": true,
+          "isSecret": true,
+          "description": "Development JWT/API secret"
+        },
+        {
+          "id": "v3",
+          "key": "userId",
+          "value": "1",
+          "initialValue": "1",
+          "enabled": true,
+          "description": "Active test user identifier"
+        },
+        {
+          "id": "v4",
+          "key": "httpBinUrl",
+          "value": "https://httpbin.org",
+          "initialValue": "https://httpbin.org",
+          "enabled": true,
+          "description": "HTTP Inspection & Echo Server"
+        }
+      ],
+      "createdAt": "2026-08-12T14:35:00Z"
+    },
+    {
+      "id": "env_stg",
+      "workspaceId": "ws_team_dev_core",
+      "name": "Staging",
+      "variables": [
+        {
+          "id": "v5",
+          "key": "baseUrl",
+          "value": "https://jsonplaceholder.typicode.com",
+          "initialValue": "https://staging-api.techcorp.io",
+          "enabled": true,
+          "description": "Staging cluster gateway"
+        },
+        {
+          "id": "v6",
+          "key": "apiKey",
+          "value": "stg_token_live_77281",
+          "initialValue": "stg_token_live_77281",
+          "enabled": true,
+          "isSecret": true,
+          "description": "Staging OAuth Bearer"
+        },
+        {
+          "id": "v7",
+          "key": "userId",
+          "value": "42",
+          "initialValue": "42",
+          "enabled": true,
+          "description": "Staging test account"
+        },
+        {
+          "id": "v8",
+          "key": "httpBinUrl",
+          "value": "https://httpbin.org",
+          "initialValue": "https://httpbin.org",
+          "enabled": true,
+          "description": "HTTP Inspection & Echo Server"
+        }
+      ],
+      "createdAt": "2026-08-12T14:36:00Z"
+    },
+    {
+      "id": "env_prod",
+      "workspaceId": "ws_team_dev_core",
+      "name": "Production",
+      "variables": [
+        {
+          "id": "v9",
+          "key": "baseUrl",
+          "value": "https://jsonplaceholder.typicode.com",
+          "initialValue": "https://api.techcorp.io/v1",
+          "enabled": true,
+          "description": "Global CDN load balancer"
+        },
+        {
+          "id": "v10",
+          "key": "apiKey",
+          "value": "prod_sec_vault_990142",
+          "initialValue": "prod_sec_vault_990142",
+          "enabled": true,
+          "isSecret": true,
+          "description": "Production signed key"
+        },
+        {
+          "id": "v11",
+          "key": "userId",
+          "value": "1001",
+          "initialValue": "1001",
+          "enabled": true,
+          "description": "Enterprise user ID"
+        },
+        {
+          "id": "v12",
+          "key": "httpBinUrl",
+          "value": "https://httpbin.org",
+          "initialValue": "https://httpbin.org",
+          "enabled": true,
+          "description": "HTTP Inspection & Echo Server"
+        }
+      ],
+      "createdAt": "2026-08-12T14:37:00Z"
+    },
+    {
+      "id": "env_global",
+      "name": "Globals",
+      "isGlobal": true,
+      "variables": [
+        {
+          "id": "vg1",
+          "key": "appName",
+          "value": "CloudPost Pro",
+          "initialValue": "CloudPost Pro",
+          "enabled": true,
+          "description": "System application name"
+        },
+        {
+          "id": "vg2",
+          "key": "apiVersion",
+          "value": "v2.4",
+          "initialValue": "v2.4",
+          "enabled": true,
+          "description": "Current API major version"
+        }
+      ],
+      "createdAt": "2026-08-10T09:00:00Z"
+    }
+  ],
+  "INITIAL_COLLECTIONS": [
+    {
+      "id": "col_ecommerce_api",
+      "workspaceId": "ws_team_dev_core",
+      "name": "E-Commerce & Orders API",
+      "description": "Production services for authentication, catalog querying, cart management, and order checkout.",
+      "createdAt": "2026-08-12T15:00:00Z",
+      "updatedAt": "2026-08-18T10:30:00Z",
+      "folders": [
+        {
+          "id": "fld_auth",
+          "collectionId": "col_ecommerce_api",
+          "name": "Authentication & Tokens",
+          "description": "Endpoints to authenticate users and generate session tokens.",
+          "createdAt": "2026-08-12T15:05:00Z",
+          "requests": [
+            {
+              "id": "req_auth_login",
+              "collectionId": "col_ecommerce_api",
+              "folderId": "fld_auth",
+              "name": "Login & Obtain Bearer Token",
+              "description": "Submits user credentials and receives an authentication token.",
+              "method": "POST",
+              "url": "{{httpBinUrl}}/post",
+              "params": [],
+              "headers": [
+                {
+                  "id": "h1",
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "enabled": true
+                },
+                {
+                  "id": "h2",
+                  "key": "X-App-Version",
+                  "value": "{{apiVersion}}",
+                  "enabled": true
+                }
+              ],
+              "body": {
+                "type": "json",
+                "rawText": "{\n  \"email\": \"hiren.developer@techcorp.io\",\n  \"password\": \"superSecretPassword123!\",\n  \"client_id\": \"{{appName}}\"\n}",
+                "rawType": "application/json",
+                "formData": [],
+                "urlEncoded": []
+              },
+              "auth": {
+                "type": "none"
+              },
+              "testsScript": "// Verify HTTP 200 Status\npm.test(\"Status code is 200 OK\", function () {\n    pm.response.to.have.status(200);\n});\n\n// Verify JSON payload structure\npm.test(\"Response contains JSON data\", function () {\n    var jsonData = pm.response.json();\n    pm.expect(jsonData).to.be.an('object');\n});\n\n// Verify response latency\npm.test(\"Response time is under 1500ms\", function () {\n    pm.expect(pm.response.responseTime).to.be.below(1500);\n});",
+              "createdAt": "2026-08-12T15:10:00Z",
+              "updatedAt": "2026-08-18T10:15:00Z"
+            },
+            {
+              "id": "req_auth_refresh",
+              "collectionId": "col_ecommerce_api",
+              "folderId": "fld_auth",
+              "name": "Refresh Access Token",
+              "description": "Exchanges refresh token for new access token.",
+              "method": "POST",
+              "url": "{{httpBinUrl}}/post",
+              "params": [],
+              "headers": [
+                {
+                  "id": "h3",
+                  "key": "Authorization",
+                  "value": "Bearer {{apiKey}}",
+                  "enabled": true
+                },
+                {
+                  "id": "h4",
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "enabled": true
+                }
+              ],
+              "body": {
+                "type": "json",
+                "rawText": "{\n  \"refreshToken\": \"rf_9904128912389\",\n  \"grant_type\": \"refresh_token\"\n}",
+                "rawType": "application/json",
+                "formData": [],
+                "urlEncoded": []
+              },
+              "auth": {
+                "type": "bearer",
+                "bearerToken": "{{apiKey}}"
+              },
+              "testsScript": "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});",
+              "createdAt": "2026-08-12T15:15:00Z",
+              "updatedAt": "2026-08-12T15:15:00Z"
+            }
+          ]
+        },
+        {
+          "id": "fld_products",
+          "collectionId": "col_ecommerce_api",
+          "name": "Catalog & Products",
+          "description": "Fetch items, search catalog, and manage inventory.",
+          "createdAt": "2026-08-12T15:20:00Z",
+          "requests": [
+            {
+              "id": "req_get_products",
+              "collectionId": "col_ecommerce_api",
+              "folderId": "fld_products",
+              "name": "Get All Products List",
+              "description": "Fetches paginated products list with filter support.",
+              "method": "GET",
+              "url": "{{baseUrl}}/posts",
+              "params": [
+                {
+                  "id": "p1",
+                  "key": "_limit",
+                  "value": "10",
+                  "enabled": true,
+                  "description": "Max items per page"
+                },
+                {
+                  "id": "p2",
+                  "key": "_page",
+                  "value": "1",
+                  "enabled": true,
+                  "description": "Page number"
+                },
+                {
+                  "id": "p3",
+                  "key": "userId",
+                  "value": "{{userId}}",
+                  "enabled": true,
+                  "description": "Filter by creator"
+                }
+              ],
+              "headers": [
+                {
+                  "id": "h5",
+                  "key": "Accept",
+                  "value": "application/json",
+                  "enabled": true
+                }
+              ],
+              "body": {
+                "type": "none",
+                "rawText": "",
+                "rawType": "text/plain",
+                "formData": [],
+                "urlEncoded": []
+              },
+              "auth": {
+                "type": "none"
+              },
+              "testsScript": "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response is an array of items\", function () {\n    var data = pm.response.json();\n    pm.expect(Array.isArray(data)).to.be.true;\n    pm.expect(data.length).to.be.above(0);\n});",
+              "createdAt": "2026-08-12T15:25:00Z",
+              "updatedAt": "2026-08-18T09:40:00Z"
+            },
+            {
+              "id": "req_get_product_detail",
+              "collectionId": "col_ecommerce_api",
+              "folderId": "fld_products",
+              "name": "Get Product By ID",
+              "description": "Retrieves specific product record by primary key.",
+              "method": "GET",
+              "url": "{{baseUrl}}/posts/{{userId}}",
+              "params": [],
+              "headers": [
+                {
+                  "id": "h6",
+                  "key": "Accept",
+                  "value": "application/json",
+                  "enabled": true
+                }
+              ],
+              "body": {
+                "type": "none",
+                "rawText": "",
+                "rawType": "text/plain",
+                "formData": [],
+                "urlEncoded": []
+              },
+              "auth": {
+                "type": "none"
+              },
+              "testsScript": "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Product has title and body fields\", function () {\n    var data = pm.response.json();\n    pm.expect(data).to.have.property('title');\n    pm.expect(data).to.have.property('body');\n});",
+              "createdAt": "2026-08-12T15:30:00Z",
+              "updatedAt": "2026-08-12T15:30:00Z"
+            },
+            {
+              "id": "req_create_product",
+              "collectionId": "col_ecommerce_api",
+              "folderId": "fld_products",
+              "name": "Create New Product",
+              "description": "Adds a new product entity to the catalogue database.",
+              "method": "POST",
+              "url": "{{baseUrl}}/posts",
+              "params": [],
+              "headers": [
+                {
+                  "id": "h7",
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "enabled": true
+                },
+                {
+                  "id": "h8",
+                  "key": "Authorization",
+                  "value": "Bearer {{apiKey}}",
+                  "enabled": true
+                }
+              ],
+              "body": {
+                "type": "json",
+                "rawText": "{\n  \"title\": \"High-Performance Wireless Developer Keyboard\",\n  \"body\": \"Ergonomic mechanical switches with custom PBT keycaps, Bluetooth 5.3, and multi-host pairing.\",\n  \"userId\": 1\n}",
+                "rawType": "application/json",
+                "formData": [],
+                "urlEncoded": []
+              },
+              "auth": {
+                "type": "bearer",
+                "bearerToken": "{{apiKey}}"
+              },
+              "testsScript": "pm.test(\"Status code is 201 Created\", function () {\n    pm.response.to.have.status(201);\n});\n\npm.test(\"Returned record has generated ID\", function () {\n    var data = pm.response.json();\n    pm.expect(data).to.have.property('id');\n});",
+              "createdAt": "2026-08-12T15:35:00Z",
+              "updatedAt": "2026-08-18T10:20:00Z"
+            }
+          ]
+        },
+        {
+          "id": "fld_orders",
+          "collectionId": "col_ecommerce_api",
+          "name": "Orders & Checkout",
+          "description": "Process checkout workflows, payments, and invoices.",
+          "createdAt": "2026-08-12T15:40:00Z",
+          "requests": [
+            {
+              "id": "req_update_order",
+              "collectionId": "col_ecommerce_api",
+              "folderId": "fld_orders",
+              "name": "Update Order Shipping Details",
+              "description": "Partially updates an active order status or destination address.",
+              "method": "PATCH",
+              "url": "{{baseUrl}}/posts/1",
+              "params": [],
+              "headers": [
+                {
+                  "id": "h9",
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "enabled": true
+                }
+              ],
+              "body": {
+                "type": "json",
+                "rawText": "{\n  \"status\": \"SHIPPED\",\n  \"trackingCode\": \"TRK-98831-USPS\",\n  \"updatedBy\": \"{{appName}}\"\n}",
+                "rawType": "application/json",
+                "formData": [],
+                "urlEncoded": []
+              },
+              "auth": {
+                "type": "none"
+              },
+              "testsScript": "pm.test(\"Status is 200 OK\", function () {\n    pm.response.to.have.status(200);\n});",
+              "createdAt": "2026-08-12T15:45:00Z",
+              "updatedAt": "2026-08-12T15:45:00Z"
+            },
+            {
+              "id": "req_cancel_order",
+              "collectionId": "col_ecommerce_api",
+              "folderId": "fld_orders",
+              "name": "Cancel Order (Delete)",
+              "description": "Permanently deletes or cancels an order.",
+              "method": "DELETE",
+              "url": "{{baseUrl}}/posts/1",
+              "params": [],
+              "headers": [],
+              "body": {
+                "type": "none",
+                "rawText": "",
+                "rawType": "text/plain",
+                "formData": [],
+                "urlEncoded": []
+              },
+              "auth": {
+                "type": "none"
+              },
+              "testsScript": "pm.test(\"Status code is 200 or 204\", function () {\n    pm.expect([200, 204]).to.include(pm.response.status);\n});",
+              "createdAt": "2026-08-12T15:50:00Z",
+              "updatedAt": "2026-08-12T15:50:00Z"
+            }
+          ]
+        }
+      ],
+      "requests": [
+        {
+          "id": "req_healthcheck",
+          "collectionId": "col_ecommerce_api",
+          "name": "Service Health Check",
+          "description": "Pings the gateway server to verify uptime and response status.",
+          "method": "GET",
+          "url": "{{httpBinUrl}}/status/200",
+          "params": [],
+          "headers": [],
+          "body": {
+            "type": "none",
+            "rawText": "",
+            "rawType": "text/plain",
+            "formData": [],
+            "urlEncoded": []
+          },
+          "auth": {
+            "type": "none"
+          },
+          "testsScript": "pm.test(\"Health check returns 200\", function () {\n    pm.response.to.have.status(200);\n});",
+          "createdAt": "2026-08-12T15:02:00Z",
+          "updatedAt": "2026-08-12T15:02:00Z"
+        }
+      ]
+    },
+    {
+      "id": "col_users_identity",
+      "workspaceId": "ws_team_dev_core",
+      "name": "User Identity & RBAC Service",
+      "description": "User registration, role assignments, permissions checks, and OAuth provider links.",
+      "createdAt": "2026-08-14T11:00:00Z",
+      "updatedAt": "2026-08-18T08:30:00Z",
+      "folders": [],
+      "requests": [
+        {
+          "id": "req_list_users",
+          "collectionId": "col_users_identity",
+          "name": "List Workspace Users",
+          "description": "Returns list of team accounts with roles.",
+          "method": "GET",
+          "url": "{{baseUrl}}/users",
+          "params": [
+            {
+              "id": "pu1",
+              "key": "_limit",
+              "value": "5",
+              "enabled": true,
+              "description": "Limit"
+            }
+          ],
+          "headers": [
+            {
+              "id": "hu1",
+              "key": "Accept",
+              "value": "application/json",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none",
+            "rawText": "",
+            "rawType": "text/plain",
+            "formData": [],
+            "urlEncoded": []
+          },
+          "auth": {
+            "type": "none"
+          },
+          "testsScript": "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"User list contains valid email entries\", function () {\n    var users = pm.response.json();\n    pm.expect(users).to.be.an('array');\n    pm.expect(users[0]).to.have.property('email');\n});",
+          "createdAt": "2026-08-14T11:10:00Z",
+          "updatedAt": "2026-08-14T11:10:00Z"
+        },
+        {
+          "id": "req_inspect_headers",
+          "collectionId": "col_users_identity",
+          "name": "Echo & Inspect Headers (HTTPBin)",
+          "description": "Inspects all inbound headers passed through client gateway.",
+          "method": "GET",
+          "url": "{{httpBinUrl}}/headers",
+          "params": [],
+          "headers": [
+            {
+              "id": "hu2",
+              "key": "X-Custom-Client",
+              "value": "Postman-React-Platform",
+              "enabled": true
+            },
+            {
+              "id": "hu3",
+              "key": "X-Requested-By",
+              "value": "{{appName}}",
+              "enabled": true
+            }
+          ],
+          "body": {
+            "type": "none",
+            "rawText": "",
+            "rawType": "text/plain",
+            "formData": [],
+            "urlEncoded": []
+          },
+          "auth": {
+            "type": "none"
+          },
+          "testsScript": "pm.test(\"Headers echo returned successfully\", function () {\n    pm.response.to.have.status(200);\n    var data = pm.response.json();\n    pm.expect(data).to.have.property('headers');\n});",
+          "createdAt": "2026-08-14T11:15:00Z",
+          "updatedAt": "2026-08-14T11:15:00Z"
+        }
+      ]
+    }
+  ],
+  "INITIAL_ACTIVITY_LOGS": [
+    {
+      "id": "act_1",
+      "workspaceId": "ws_team_dev_core",
+      "user": {
+        "name": "Hiren Patel",
+        "email": "hirenpatelhv@gmail.com",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80"
+      },
+      "action": "CREATED_COLLECTION",
+      "targetName": "E-Commerce & Orders API",
+      "targetType": "collection",
+      "timestamp": "2026-08-18T10:45:00Z"
+    },
+    {
+      "id": "act_2",
+      "workspaceId": "ws_team_dev_core",
+      "user": {
+        "name": "Sarah Chen",
+        "email": "sarah.chen@techcorp.io",
+        "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80"
+      },
+      "action": "UPDATED_REQUEST",
+      "targetName": "Login & Obtain Bearer Token",
+      "targetType": "request",
+      "details": "Added automated assertion tests for HTTP 200 and schema validation",
+      "timestamp": "2026-08-18T10:15:00Z"
+    },
+    {
+      "id": "act_3",
+      "workspaceId": "ws_team_dev_core",
+      "user": {
+        "name": "Hiren Patel",
+        "email": "hirenpatelhv@gmail.com",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80"
+      },
+      "action": "INVITED_MEMBER",
+      "targetName": "Elena Rostova (Editor)",
+      "targetType": "member",
+      "details": "Sent workspace invite to elena.rostova@cloudscale.net",
+      "timestamp": "2026-08-17T16:00:00Z"
+    },
+    {
+      "id": "act_4",
+      "workspaceId": "ws_team_dev_core",
+      "user": {
+        "name": "Alex Rivera",
+        "email": "alex.r@techcorp.io",
+        "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80"
+      },
+      "action": "EXECUTED_REQUEST",
+      "targetName": "Get All Products List",
+      "targetType": "request",
+      "details": "Run executed in Development environment (200 OK in 142ms)",
+      "timestamp": "2026-08-18T09:40:00Z"
+    }
+  ],
+  "INITIAL_RECENT_REQUESTS": [
+    {
+      "id": "rec_init_1",
+      "requestId": "req_auth_login",
+      "collectionId": "col_ecommerce_core",
+      "name": "Login & Obtain Bearer Token",
+      "method": "POST",
+      "url": "{{baseUrl}}/auth/login",
+      "status": 200,
+      "statusText": "OK",
+      "time": 74,
+      "size": 512,
+      "executedAt": "2026-09-11T16:14:25.653Z",
+      "requestSnapshot": {
+        "id": "req_auth_login",
+        "collectionId": "col_ecommerce_api",
+        "folderId": "fld_auth",
+        "name": "Login & Obtain Bearer Token",
+        "description": "Submits user credentials and receives an authentication token.",
+        "method": "POST",
+        "url": "{{httpBinUrl}}/post",
+        "params": [],
+        "headers": [
+          {
+            "id": "h1",
+            "key": "Content-Type",
+            "value": "application/json",
+            "enabled": true
+          },
+          {
+            "id": "h2",
+            "key": "X-App-Version",
+            "value": "{{apiVersion}}",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "type": "json",
+          "rawText": "{\n  \"email\": \"hiren.developer@techcorp.io\",\n  \"password\": \"superSecretPassword123!\",\n  \"client_id\": \"{{appName}}\"\n}",
+          "rawType": "application/json",
+          "formData": [],
+          "urlEncoded": []
+        },
+        "auth": {
+          "type": "none"
+        },
+        "testsScript": "// Verify HTTP 200 Status\npm.test(\"Status code is 200 OK\", function () {\n    pm.response.to.have.status(200);\n});\n\n// Verify JSON payload structure\npm.test(\"Response contains JSON data\", function () {\n    var jsonData = pm.response.json();\n    pm.expect(jsonData).to.be.an('object');\n});\n\n// Verify response latency\npm.test(\"Response time is under 1500ms\", function () {\n    pm.expect(pm.response.responseTime).to.be.below(1500);\n});",
+        "createdAt": "2026-08-12T15:10:00Z",
+        "updatedAt": "2026-08-18T10:15:00Z"
+      },
+      "responseSnapshot": {
+        "status": 200,
+        "statusText": "OK",
+        "time": 74,
+        "size": 512,
+        "headers": {
+          "content-type": "application/json",
+          "x-powered-by": "Express"
+        },
+        "data": {
+          "success": true,
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.cloudpost_sample_token",
+          "user": {
+            "id": "usr_hiren_101",
+            "name": "Hiren Patel",
+            "role": "ADMIN"
+          }
+        },
+        "rawBody": "{\"success\":true,\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.cloudpost_sample_token\",\"user\":{\"id\":\"usr_hiren_101\",\"name\":\"Hiren Patel\",\"role\":\"ADMIN\"}}",
+        "timestamp": "2026-09-11T16:14:25.653Z",
+        "testResults": [
+          {
+            "name": "Status code is 200",
+            "passed": true,
+            "executionTimeMs": 2
+          },
+          {
+            "name": "Response has auth token",
+            "passed": true,
+            "executionTimeMs": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "rec_init_2",
+      "requestId": "req_prod_list",
+      "collectionId": "col_ecommerce_core",
+      "name": "Get All Products List",
+      "method": "GET",
+      "url": "{{baseUrl}}/products?page=1&limit=10&status=active",
+      "status": 200,
+      "statusText": "OK",
+      "time": 142,
+      "size": 2048,
+      "executedAt": "2026-09-11T15:59:25.653Z",
+      "requestSnapshot": {
+        "id": "req_get_products",
+        "collectionId": "col_ecommerce_api",
+        "folderId": "fld_products",
+        "name": "Get All Products List",
+        "description": "Fetches paginated products list with filter support.",
+        "method": "GET",
+        "url": "{{baseUrl}}/posts",
+        "params": [
+          {
+            "id": "p1",
+            "key": "_limit",
+            "value": "10",
+            "enabled": true,
+            "description": "Max items per page"
+          },
+          {
+            "id": "p2",
+            "key": "_page",
+            "value": "1",
+            "enabled": true,
+            "description": "Page number"
+          },
+          {
+            "id": "p3",
+            "key": "userId",
+            "value": "{{userId}}",
+            "enabled": true,
+            "description": "Filter by creator"
+          }
+        ],
+        "headers": [
+          {
+            "id": "h5",
+            "key": "Accept",
+            "value": "application/json",
+            "enabled": true
+          }
+        ],
+        "body": {
+          "type": "none",
+          "rawText": "",
+          "rawType": "text/plain",
+          "formData": [],
+          "urlEncoded": []
+        },
+        "auth": {
+          "type": "none"
+        },
+        "testsScript": "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response is an array of items\", function () {\n    var data = pm.response.json();\n    pm.expect(Array.isArray(data)).to.be.true;\n    pm.expect(data.length).to.be.above(0);\n});",
+        "createdAt": "2026-08-12T15:25:00Z",
+        "updatedAt": "2026-08-18T09:40:00Z"
+      },
+      "responseSnapshot": {
+        "status": 200,
+        "statusText": "OK",
+        "time": 142,
+        "size": 2048,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "data": {
+          "page": 1,
+          "limit": 10,
+          "total": 48,
+          "items": [
+            {
+              "id": "prd_1",
+              "title": "High Performance API Gateway",
+              "price": 99
+            },
+            {
+              "id": "prd_2",
+              "title": "Database Cache Cluster",
+              "price": 149
+            }
+          ]
+        },
+        "rawBody": "{\"page\":1,\"limit\":10,\"total\":48,\"items\":[{\"id\":\"prd_1\",\"title\":\"High Performance API Gateway\",\"price\":99.0},{\"id\":\"prd_2\",\"title\":\"Database Cache Cluster\",\"price\":149.0}]}",
+        "timestamp": "2026-09-11T15:59:25.653Z",
+        "testResults": [
+          {
+            "name": "Status code is 200",
+            "passed": true,
+            "executionTimeMs": 3
+          },
+          {
+            "name": "Response is JSON array",
+            "passed": true,
+            "executionTimeMs": 2
+          }
+        ]
+      }
+    }
+  ]
+}

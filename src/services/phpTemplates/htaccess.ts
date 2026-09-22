@@ -1,0 +1,69 @@
+export function getHtaccessCode(): string {
+  return getHtaccessRules();
+}
+
+export function getHtaccessRules(): string {
+  return `# ==============================================================================
+# CloudPost Shared Hosting Configuration (Apache 2.4+ / LiteSpeed / cPanel / Hostinger)
+# Clean URLs (No .php in address bar) & Zero-Leak Status Bar Optimization
+# ==============================================================================
+
+DirectoryIndex index.php index.html
+
+# Prevent directory indexing safely if supported
+<IfModule mod_autoindex.c>
+    IndexIgnore *
+</IfModule>
+
+# Enable URL Rewriting for Clean URLs without .php in Address Bar
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # 1. Redirect any direct request with .php to extensionless clean URL (Browser Address Bar)
+    RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/index\.php [NC]
+    RewriteRule ^index\.php$ / [R=301,L]
+
+    RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/([^.]+)\.php [NC]
+    RewriteRule ^ %1 [R=301,L]
+
+    # 2. Map Clean URLs to corresponding PHP files
+    RewriteRule ^register/?$ register.php [L,QSA]
+    RewriteRule ^saas-users/?$ saas_users.php [L,QSA]
+    RewriteRule ^saas-reports/?$ saas_reports.php [L,QSA]
+    RewriteRule ^diagnostic/?$ diagnostic.php [L,QSA]
+    RewriteRule ^test/?$ diagnostic.php [L,QSA]
+    RewriteRule ^auth/?$ auth.php [L,QSA]
+    RewriteRule ^api/?$ api.php [L,QSA]
+
+    # 3. Generic fallback: If file without .php exists as .php file, route internally
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}\.php -f
+    RewriteRule ^(.*)$ $1.php [L,QSA]
+</IfModule>
+
+# Protect sensitive internal data, logs, and database dumps from direct HTTP access
+<FilesMatch "^(config\\.php|data\\.json|.*_data\\.json|settings\\.json|\\.env|.*\\.log|.*\\.sql|README\\.md)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Explicitly ensure manifest.json and static assets are always accessible
+<FilesMatch "(manifest\\.json|\\.svg|\\.png|\\.ico|\\.js|\\.css)$">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Allow from all
+    </IfModule>
+</FilesMatch>
+
+# Set UTF-8 encoding
+AddDefaultCharset UTF-8
+`;
+}
