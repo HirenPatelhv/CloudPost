@@ -23,10 +23,11 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install dependencies
+      - name: Install dependencies (clean cross-platform)
         run: |
+          npm install -g npm@latest
+          rm -f package-lock.json
           npm install
-          npm install @rollup/rollup-darwin-arm64 @rollup/rollup-darwin-x64 --no-save
 
       - name: Build macOS DMG and ZIP
         run: npm run build:mac
@@ -56,10 +57,12 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install dependencies
+      - name: Install dependencies (clean cross-platform)
+        shell: bash
         run: |
+          npm install -g npm@latest
+          rm -f package-lock.json
           npm install
-          npm install @rollup/rollup-win32-x64-msvc --no-save
 
       - name: Build Windows Executables
         run: npm run build:win
