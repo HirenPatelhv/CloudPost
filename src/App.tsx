@@ -115,7 +115,9 @@ export default function App() {
         const hasMock = Array.isArray(parsed) && parsed.some((c: any) => 
           c.id === 'col_ecommerce_api' || c.name === 'E-Commerce & Orders API' || (typeof c.name === 'string' && c.name.includes('E-Commerce'))
         );
-        if (!hasMock && parsed.length > 0) return parsed;
+        const totalRequests = Array.isArray(parsed) ? parsed.reduce((acc: number, col: any) => 
+          acc + (col.requests?.length || 0) + (col.folders?.reduce((facc: number, f: any) => facc + (f.requests?.length || 0), 0) || 0), 0) : 0;
+        if (!hasMock && parsed.length > 0 && totalRequests > 0) return parsed;
       } catch (e) {}
     }
     return INITIAL_COLLECTIONS;
@@ -159,7 +161,6 @@ export default function App() {
   };
 
   // 2. Tab Management State - Restores from LocalStorage for seamless Guest Mode & Session Recovery
-  const initialRequest = INITIAL_COLLECTIONS[0]?.folders[0]?.requests[0];
   const [tabs, setTabs] = useState<TabItem[]>(() => {
     try {
       const savedTabs = localStorage.getItem('cp_tabs');
@@ -167,21 +168,59 @@ export default function App() {
         let parsed = JSON.parse(savedTabs);
         if (Array.isArray(parsed) && parsed.length > 0) {
           parsed = parsed.filter((t: any) => t.requestId !== 'req_auth_login' && !t.title?.includes('Login & Obtain Bearer Token'));
-          if (isDesktopTool()) {
-            parsed = parsed.filter((t: any) => t.type !== 'saas_users' && t.type !== 'saas_reports' && t.type !== 'register');
-          }
           if (parsed.length > 0) return parsed;
         }
       }
     } catch (e) {}
+
+    const req1 = INITIAL_COLLECTIONS[0]?.folders[0]?.requests[0]; // New HTTP Request
+    const req2 = INITIAL_COLLECTIONS[0]?.folders[0]?.requests[1]; // Get All Products List
+    const req3 = INITIAL_COLLECTIONS[0]?.folders[0]?.requests[2]; // Update Order Shipping Details
+
     return [
       {
-        id: 'tab_welcome_workspace',
-        type: 'request',
-        title: initialRequest?.name || 'Workspace',
-        method: initialRequest?.method || 'GET',
-        requestId: initialRequest?.id || '',
-        collectionId: initialRequest?.collectionId || INITIAL_COLLECTIONS[0]?.id,
+        id: 'tab_register',
+        type: 'register',
+        title: 'Register Account',
+      },
+      ...(req3 ? [{
+        id: `tab_${req3.id}`,
+        type: 'request' as const,
+        title: req3.name,
+        method: req3.method,
+        requestId: req3.id,
+        collectionId: req3.collectionId,
+      }] : []),
+      ...(req2 ? [{
+        id: `tab_${req2.id}`,
+        type: 'request' as const,
+        title: req2.name,
+        method: req2.method,
+        requestId: req2.id,
+        collectionId: req2.collectionId,
+      }] : []),
+      ...(req1 ? [{
+        id: `tab_${req1.id}`,
+        type: 'request' as const,
+        title: req1.name,
+        method: req1.method,
+        requestId: req1.id,
+        collectionId: req1.collectionId,
+      }] : []),
+      {
+        id: 'tab_websocket_client',
+        type: 'websocket',
+        title: 'WebSocket Client',
+      },
+      {
+        id: 'tab_graphql_explorer',
+        type: 'graphql',
+        title: 'GraphQL Explorer',
+      },
+      {
+        id: 'tab_system_architecture',
+        type: 'architecture',
+        title: 'System Architecture',
       },
     ];
   });
@@ -190,17 +229,35 @@ export default function App() {
       const savedActiveTab = localStorage.getItem('cp_active_tab_id');
       if (savedActiveTab && savedActiveTab !== 'tab_req_auth_login') return savedActiveTab;
     } catch (e) {}
-    return tabs[0]?.id || 'tab_welcome_workspace';
+    return 'tab_req_new_http';
   });
 
   // Responsive layout & sidebar toggle
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return window.innerWidth >= 1024;
-    }
-    return true;
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const [layoutMode, setLayoutMode] = useState<'columns' | 'rows'>(() => {
+    try {
+      const saved = localStorage.getItem('cp_layout_mode');
+      if (saved === 'columns' || saved === 'rows') return saved;
+    } catch (e) {}
+    return 'columns';
   });
-  const [layoutMode, setLayoutMode] = useState<'columns' | 'rows'>('columns');
+
+  const handleToggleLayout = () => {
+    setLayoutMode(prev => {
+      const next = prev === 'columns' ? 'rows' : 'columns';
+      try {
+        localStorage.setItem('cp_layout_mode', next);
+      } catch (e) {}
+      return next;
+    });
+    // If current tab is not a request, websocket, or graphql, switch to the active request tab so user immediately sees the layout shift
+    if (activeTab.type !== 'request' && activeTab.type !== 'websocket' && activeTab.type !== 'graphql') {
+      const targetReqTab = tabs.find(t => t.type === 'request');
+      if (targetReqTab) {
+        setActiveTabId(targetReqTab.id);
+      }
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -895,7 +952,6 @@ export default function App() {
   };
 
   const handleOpenSaaSUsersTab = () => {
-    if (isDesktopTool()) return;
     setShowLandingPage(false);
     const existing = tabs.find(t => t.type === 'saas_users');
     if (existing) {
@@ -912,7 +968,6 @@ export default function App() {
   };
 
   const handleOpenSaaSReportsTab = () => {
-    if (isDesktopTool()) return;
     setShowLandingPage(false);
     const existing = tabs.find(t => t.type === 'saas_reports');
     if (existing) {
@@ -929,7 +984,6 @@ export default function App() {
   };
 
   const handleOpenRegisterTab = () => {
-    if (isDesktopTool()) return;
     setShowLandingPage(false);
     const existing = tabs.find(t => t.type === 'register');
     if (existing) {
@@ -1917,7 +1971,7 @@ export default function App() {
             onLaunchGuestMode={() => setShowLandingPage(false)}
             onOpenAuthModal={() => setShowAuthModal(true)}
             onOpenRegister={handleOpenRegisterTab}
-            onOpenDownloadPage={isDesktopTool() ? undefined : () => setShowDownloadModal(true)}
+            onOpenDownloadPage={() => setShowDownloadModal(true)}
             onOpenDocs={handleOpenDocsTab}
             onOpenHelpModal={() => setShowHelpModal(true)}
             isAuthenticated={!isGuest}
@@ -1957,10 +2011,10 @@ export default function App() {
         onOpenArchitectureTab={handleOpenArchitectureTab}
         isSaaSAdmin={userIsSaaSAdmin}
         isSaaSUser={isSaaSUser}
-        onOpenSaaSUsers={isDesktopTool() ? undefined : handleOpenSaaSUsersTab}
-        onOpenSaaSReports={isDesktopTool() ? undefined : handleOpenSaaSReportsTab}
-        onOpenRegister={isDesktopTool() ? undefined : handleOpenRegisterTab}
-        onOpenDownloadModal={isDesktopTool() ? undefined : () => setShowDownloadModal(true)}
+        onOpenSaaSUsers={handleOpenSaaSUsersTab}
+        onOpenSaaSReports={handleOpenSaaSReportsTab}
+        onOpenRegister={handleOpenRegisterTab}
+        onOpenDownloadModal={() => setShowDownloadModal(true)}
         onOpenDocsTab={handleOpenDocsTab}
         onOpenHelpModal={() => setShowHelpModal(true)}
         onExportAllCollections={() => handleOpenExportModal({ exportType: 'postman_collection' })}
@@ -2053,8 +2107,8 @@ export default function App() {
             onOpenArchitectureTab={handleOpenArchitectureTab}
             isSaaSAdmin={userIsSaaSAdmin}
             isSaaSUser={isSaaSUser}
-            onOpenSaaSUsersTab={isDesktopTool() ? undefined : handleOpenSaaSUsersTab}
-            onOpenSaaSReportsTab={isDesktopTool() ? undefined : handleOpenSaaSReportsTab}
+            onOpenSaaSUsersTab={handleOpenSaaSUsersTab}
+            onOpenSaaSReportsTab={handleOpenSaaSReportsTab}
             onOpenWebSocketTab={handleOpenWebSocketTab}
             onOpenMockServerTab={handleOpenMockServerTab}
             onOpenGraphQLTab={handleOpenGraphQLTab}
@@ -2067,13 +2121,13 @@ export default function App() {
             isSidebarOpen={isSidebarOpen}
             onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
             layoutMode={layoutMode}
-            onToggleLayout={() => setLayoutMode(prev => prev === 'columns' ? 'rows' : 'columns')}
+            onToggleLayout={handleToggleLayout}
           />
 
           {/* Tab Viewport Content */}
           <div className="flex-1 overflow-hidden">
             {activeTab.type === 'websocket' && (
-              <WebSocketTester />
+              <WebSocketTester layoutMode={layoutMode} />
             )}
 
             {activeTab.type === 'mock_server' && (
@@ -2084,7 +2138,7 @@ export default function App() {
             )}
 
             {activeTab.type === 'graphql' && (
-              <GraphQLExplorer />
+              <GraphQLExplorer layoutMode={layoutMode} />
             )}
 
             {activeTab.type === 'monitor' && (
@@ -2112,7 +2166,7 @@ export default function App() {
               )
             )}
 
-            {!isDesktopTool() && activeTab.type === 'saas_users' && (
+            {activeTab.type === 'saas_users' && (
               <SaaSUserDashboard
                 customers={saasCustomers}
                 currentUser={currentUser}
@@ -2125,7 +2179,7 @@ export default function App() {
               />
             )}
 
-            {!isDesktopTool() && activeTab.type === 'saas_reports' && (
+            {activeTab.type === 'saas_reports' && (
               <SaaSReportsView
                 customers={saasCustomers}
                 currentUser={currentUser}
@@ -2137,7 +2191,7 @@ export default function App() {
               />
             )}
 
-            {!isDesktopTool() && activeTab.type === 'register' && (
+            {activeTab.type === 'register' && (
               <RegisterPage
                 onRegisterSuccess={handleRegisterSuccess}
                 onSwitchToLogin={() => {
@@ -2170,7 +2224,7 @@ export default function App() {
                 activeCollectionId={activeRequestCollection?.id || workspaceCollections[0]?.id}
                 variables={activeVariables}
                 onOpenRequestInStudio={handleSelectRequest}
-                onOpenDownloadModal={isDesktopTool() ? undefined : () => setShowDownloadModal(true)}
+                onOpenDownloadModal={() => setShowDownloadModal(true)}
                 isSaaSUser={isSaaSUser}
                 onOpenAuthModal={() => setShowAuthModal(true)}
                 onOpenRegister={handleOpenRegisterTab}
@@ -2185,9 +2239,13 @@ export default function App() {
             )}
 
             {activeTab.type === 'request' && activeRequestObj && (
-              <div className={`h-full flex ${layoutMode === 'columns' ? 'flex-col lg:flex-row' : 'flex-col'} overflow-hidden`}>
+              <div className={`h-full flex ${layoutMode === 'columns' ? 'flex-row' : 'flex-col'} overflow-hidden min-w-0`}>
                 {/* Request Builder Pane */}
-                <div className={`flex-1 overflow-hidden ${layoutMode === 'columns' ? 'lg:border-r border-b lg:border-b-0 border-white/10' : 'border-b border-white/10 min-h-[340px]'} flex flex-col`}>
+                <div className={`overflow-hidden flex flex-col min-w-0 ${
+                  layoutMode === 'columns'
+                    ? 'flex-1 w-1/2 border-r border-white/10 h-full'
+                    : 'flex-1 h-1/2 min-h-[320px] border-b border-white/10'
+                }`}>
                   <RequestBuilder
                     key={activeRequestObj.id}
                     request={activeRequestObj}
@@ -2208,7 +2266,11 @@ export default function App() {
                 </div>
 
                 {/* Response Inspector Pane */}
-                <div className="flex-1 overflow-hidden flex flex-col min-h-[260px]">
+                <div className={`overflow-hidden flex flex-col min-w-0 ${
+                  layoutMode === 'columns'
+                    ? 'flex-1 w-1/2 h-full'
+                    : 'flex-1 h-1/2 min-h-[260px]'
+                }`}>
                   <ResponseViewer
                     response={activeResponse}
                     activeRequest={activeRequestObj}

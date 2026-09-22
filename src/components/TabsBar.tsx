@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { TabItem, HttpMethod, ApiResponse } from '../types';
-import { isDesktopTool } from '../services/platformService';
 import { 
   Plus, 
   X, 
@@ -150,7 +149,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
 
       {/* Tabs list */}
       <div className="flex items-center gap-1 overflow-x-auto no-scrollbar h-full flex-1 min-w-0 pr-2">
-        {tabs.filter(t => !isDesktopTool() || (t.type !== 'saas_users' && t.type !== 'saas_reports' && t.type !== 'register')).map(tab => {
+        {tabs.map(tab => {
           const isActive = tab.id === activeTabId;
           const isExecuting = tab.isLoading || (tab.requestId ? executingRequestIds?.includes(tab.requestId) : false);
           const res = tab.requestId && responsesMap ? responsesMap[tab.requestId] : undefined;
@@ -284,19 +283,28 @@ export const TabsBar: React.FC<TabsBarProps> = ({
         {/* Layout toggle (Columns / Rows) */}
         {onToggleLayout && (
           <button
-            onClick={onToggleLayout}
-            className="h-8 inline-flex items-center gap-1 px-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-white rounded-lg text-xs transition-colors shrink-0 whitespace-nowrap"
-            title={layoutMode === 'columns' ? "Switch to Stacked View (Top/Bottom)" : "Switch to Side-by-Side View (Left/Right)"}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onToggleLayout();
+            }}
+            className={`h-8 inline-flex items-center gap-1.5 px-2.5 border rounded-lg text-xs font-semibold transition-all shrink-0 whitespace-nowrap cursor-pointer select-none active:scale-95 ${
+              layoutMode === 'columns'
+                ? 'bg-orange-500/15 hover:bg-orange-500/25 border-orange-500/30 text-orange-300'
+                : 'bg-emerald-500/15 hover:bg-emerald-500/25 border-emerald-500/30 text-emerald-300'
+            }`}
+            title={layoutMode === 'columns' ? "Side-by-Side view active: Click to switch to Stacked View (Top/Bottom)" : "Stacked view active: Click to switch to Side-by-Side View (Left/Right)"}
           >
             {layoutMode === 'columns' ? (
               <>
                 <Columns className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-                <span className="hidden xl:inline text-[11px] whitespace-nowrap">Side-by-Side</span>
+                <span className="text-[11px] whitespace-nowrap">Side-by-Side</span>
               </>
             ) : (
               <>
                 <Rows className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span className="hidden xl:inline text-[11px] whitespace-nowrap">Stacked</span>
+                <span className="text-[11px] whitespace-nowrap">Stacked</span>
               </>
             )}
           </button>
@@ -410,7 +418,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                 </button>
               )}
 
-              {!isDesktopTool() && onOpenSaaSUsersTab && (
+              {onOpenSaaSUsersTab && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenSaaSUsersTab(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
@@ -420,7 +428,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                 </button>
               )}
 
-              {!isDesktopTool() && onOpenSaaSReportsTab && (
+              {onOpenSaaSReportsTab && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenSaaSReportsTab(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"

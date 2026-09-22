@@ -121,11 +121,73 @@ export const INITIAL_ENVIRONMENTS: Environment[] = [
 
 export const INITIAL_COLLECTIONS: Collection[] = [
   {
-    id: 'col_init_blank',
+    id: 'col_init_my_api',
     workspaceId: 'ws_default_workspace',
-    name: 'My Collection',
-    description: 'API collection ready for requests and folders.',
-    folders: [],
+    name: 'My API Collections',
+    description: 'CloudPost API Collection with organized endpoints and sample requests.',
+    folders: [
+      {
+        id: 'fld_users',
+        name: 'Users',
+        collectionId: 'col_init_my_api',
+        createdAt: '2026-09-01T00:00:00Z',
+        requests: [
+          {
+            id: 'req_new_http',
+            collectionId: 'col_init_my_api',
+            name: 'New HTTP Request',
+            method: 'GET',
+            url: 'https://jsonplaceholder.typicode.com/todos/1',
+            headers: [
+              { id: 'h1', key: 'Accept', value: 'application/json', enabled: true }
+            ],
+            params: [],
+            body: { type: 'none', rawText: '', rawType: 'application/json', formData: [], urlEncoded: [] },
+            auth: { type: 'none' },
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+          {
+            id: 'req_get_products',
+            collectionId: 'col_init_my_api',
+            name: 'Get All Products List',
+            method: 'GET',
+            url: 'https://dummyjson.com/products?limit=10',
+            headers: [
+              { id: 'h2', key: 'Accept', value: 'application/json', enabled: true }
+            ],
+            params: [
+              { id: 'p1', key: 'limit', value: '10', enabled: true }
+            ],
+            body: { type: 'none', rawText: '', rawType: 'application/json', formData: [], urlEncoded: [] },
+            auth: { type: 'none' },
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+          {
+            id: 'req_update_order',
+            collectionId: 'col_init_my_api',
+            name: 'Update Order Shipping Details',
+            method: 'PATCH',
+            url: 'https://dummyjson.com/orders/1',
+            headers: [
+              { id: 'h3', key: 'Content-Type', value: 'application/json', enabled: true }
+            ],
+            params: [],
+            body: { 
+              type: 'json', 
+              rawText: JSON.stringify({ shippingAddress: '123 Market St, Suite 400', status: 'shipped' }, null, 2), 
+              rawType: 'application/json', 
+              formData: [], 
+              urlEncoded: [] 
+            },
+            auth: { type: 'none' },
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          }
+        ]
+      }
+    ],
     requests: [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

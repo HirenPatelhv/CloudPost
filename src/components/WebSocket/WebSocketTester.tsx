@@ -22,6 +22,7 @@ import { WebSocketMessage } from '../../types';
 interface WebSocketTesterProps {
   initialUrl?: string;
   onSaveSnapshot?: (data: any) => void;
+  layoutMode?: 'columns' | 'rows';
 }
 
 const WS_PRESETS = [
@@ -33,6 +34,7 @@ const WS_PRESETS = [
 
 export const WebSocketTester: React.FC<WebSocketTesterProps> = ({
   initialUrl = 'wss://echo.websocket.org',
+  layoutMode = 'columns',
 }) => {
   const [url, setUrl] = useState(initialUrl);
   const [status, setStatus] = useState<'DISCONNECTED' | 'CONNECTING' | 'CONNECTED' | 'ERROR'>('DISCONNECTED');
@@ -350,9 +352,13 @@ export const WebSocketTester: React.FC<WebSocketTesterProps> = ({
       </div>
 
       {/* Main Split: Left Composer, Right Live Message Stream */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+      <div className={`flex-1 flex ${layoutMode === 'rows' ? 'flex-col' : 'flex-row'} overflow-hidden min-w-0`}>
         {/* Left: Message Composer */}
-        <div className="w-full md:w-5/12 border-b md:border-b-0 md:border-r border-white/10 flex flex-col bg-[#111420]">
+        <div className={`overflow-hidden flex flex-col bg-[#111420] min-w-0 ${
+          layoutMode === 'rows'
+            ? 'w-full h-1/2 min-h-[220px] border-b border-white/10'
+            : 'w-full md:w-5/12 border-r border-white/10 h-full'
+        }`}>
           <div className="p-2.5 border-b border-white/10 flex items-center justify-between bg-[#151928]">
             <span className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Message Composer</span>
             <div className="flex items-center gap-2">

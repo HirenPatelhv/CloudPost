@@ -938,9 +938,9 @@ $initialView = (isset($_GET['view']) && $_GET['view'] === 'landing') ? 'landing'
                     <!-- Layout Mode Switcher & Tools Dropdown for small screens (Responsive & Desktop) -->
                     <div class="flex items-center gap-1.5 shrink-0 pl-1">
                         <!-- Layout Mode (Columns vs Rows) -->
-                        <button type="button" @click="layoutMode = layoutMode === 'columns' ? 'rows' : 'columns'" class="px-2 py-1 rounded text-xs font-semibold flex items-center gap-1.5 text-zinc-400 hover:text-white hover:bg-white/5 border border-white/10 transition-colors" :title="layoutMode === 'columns' ? 'Switch to Stacked View (Rows)' : 'Switch to Side-by-Side View (Columns)'">
-                            <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-zinc-300" v-html="renderIcon(layoutMode === 'columns' ? 'columns' : 'rows', 'w-3.5 h-3.5')"></span>
-                            <span class="text-[11px] hidden sm:inline">{{ layoutMode === 'columns' ? 'Columns' : 'Rows' }}</span>
+                        <button type="button" @click="layoutMode = layoutMode === 'columns' ? 'rows' : 'columns'" :class="['px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-all cursor-pointer select-none active:scale-95', layoutMode === 'columns' ? 'bg-orange-500/15 border-orange-500/30 text-orange-300' : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300']" :title="layoutMode === 'columns' ? 'Side-by-Side view active: Click to switch to Stacked View (Rows)' : 'Stacked view active: Click to switch to Side-by-Side View (Columns)'">
+                            <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5" :class="layoutMode === 'columns' ? 'text-orange-400' : 'text-emerald-400'" v-html="renderIcon(layoutMode === 'columns' ? 'columns' : 'rows', 'w-3.5 h-3.5')"></span>
+                            <span class="text-[11px]">{{ layoutMode === 'columns' ? 'Side-by-Side' : 'Stacked' }}</span>
                         </button>
 
                         <!-- Tools Dropdown (Accessible on all screen sizes!) -->
@@ -2910,11 +2910,11 @@ CREATE TABLE cp_requests (
                 </div>
 
                 <!-- Active Request Area (Split Screen RequestBuilder & ResponseViewer - 100% Parity with React) -->
-                <div v-else-if="activeRequest" :class="['h-full flex overflow-hidden', layoutMode === 'columns' ? 'flex-col lg:flex-row' : 'flex-col']">
+                <div v-else-if="activeRequest" :class="['h-full flex overflow-hidden min-w-0', layoutMode === 'columns' ? 'flex-row' : 'flex-col']">
                     <!-- ========================================== -->
                     <!-- LEFT HALF: RequestBuilder Component        -->
                     <!-- ========================================== -->
-                    <div :class="['flex-1 overflow-hidden flex flex-col min-w-0 bg-[#11141e]', layoutMode === 'columns' ? 'h-full lg:border-r border-b lg:border-b-0 border-white/10' : 'border-b border-white/10 min-h-[380px]']">
+                    <div :class="['overflow-hidden flex flex-col min-w-0 bg-[#11141e]', layoutMode === 'columns' ? 'flex-1 w-1/2 h-full border-r border-white/10' : 'flex-1 h-1/2 min-h-[380px] border-b border-white/10']">
                         <!-- 1. Request Header Top Bar: Name & Actions -->
 <div class="p-3 sm:p-4 border-b border-white/10 bg-[#151926] space-y-3 shrink-0">
 <div class="flex flex-wrap lg:flex-nowrap items-center justify-between gap-2.5">
@@ -3582,7 +3582,7 @@ CREATE TABLE cp_requests (
                     <!-- ========================================== -->
                     <!-- RIGHT HALF: ResponseViewer Component       -->
                     <!-- ========================================== -->
-                    <div :class="['flex-1 overflow-hidden flex flex-col min-w-0 bg-[#0e111a]', layoutMode === 'columns' ? 'h-full' : 'min-h-[300px]']">
+                    <div :class="['overflow-hidden flex flex-col min-w-0 bg-[#0e111a]', layoutMode === 'columns' ? 'flex-1 w-1/2 h-full' : 'flex-1 h-1/2 min-h-[300px]']">
                         <!-- 1. Response Metrics & Action Bar -->
 <div class="px-4 py-2.5 bg-[#141824] border-b border-white/10 flex items-center justify-between gap-4 shrink-0 text-xs">
                             <div class="flex items-center gap-3">
@@ -6308,37 +6308,63 @@ app.Run();`,
 
         const collections = ref([
             {
-                id: 'col_json_ph',
-                name: 'JSONPlaceholder Public API',
-                folders: [],
-                requests: [
+                id: 'col_init_my_api',
+                name: 'My API Collections',
+                folders: [
                     {
-                        id: 'req_get_post',
-                        collectionId: 'col_json_ph',
-                        name: 'Get Post #1',
-                        method: 'GET',
-                        url: '{{baseUrl}}/posts/1',
-                        params: [],
-                        headers: [{ key: 'Accept', value: 'application/json', enabled: true }],
-                        auth: { type: 'none' },
-                        body: { type: 'none', rawText: '', urlEncoded: [{ key: '', value: '', enabled: true }], formData: [{ key: '', value: '', type: 'text', enabled: true }] },
-                        preRequestScript: '',
-                        testsScript: 'pm.test("Status is 200", () => pm.response.to.have.status(200));'
-                    },
-                    {
-                        id: 'req_create_post',
-                        collectionId: 'col_json_ph',
-                        name: 'Create New Post',
-                        method: 'POST',
-                        url: '{{baseUrl}}/posts',
-                        params: [],
-                        headers: [{ key: 'Content-Type', value: 'application/json', enabled: true }],
-                        auth: { type: 'none' },
-                        body: { type: 'json', rawText: '{\n  "title": "foo",\n  "body": "bar",\n  "userId": 1\n}' },
-                        preRequestScript: '',
-                        testsScript: 'pm.test("Status is 201 Created", () => pm.response.to.have.status(201));'
+                        id: 'fld_users',
+                        name: 'Users',
+                        collectionId: 'col_init_my_api',
+                        requests: [
+                            {
+                                id: 'req_new_http',
+                                collectionId: 'col_init_my_api',
+                                name: 'New HTTP Request',
+                                method: 'GET',
+                                url: 'https://jsonplaceholder.typicode.com/todos/1',
+                                params: [],
+                                headers: [{ key: 'Accept', value: 'application/json', enabled: true }],
+                                auth: { type: 'none' },
+                                body: { type: 'none', rawText: '', rawType: 'application/json', urlEncoded: [], formData: [] },
+                                preRequestScript: '',
+                                testsScript: 'pm.test("Status is 200 OK", () => pm.response.to.have.status(200));'
+                            },
+                            {
+                                id: 'req_get_products',
+                                collectionId: 'col_init_my_api',
+                                name: 'Get All Products List',
+                                method: 'GET',
+                                url: 'https://dummyjson.com/products?limit=10',
+                                params: [{ key: 'limit', value: '10', enabled: true }],
+                                headers: [{ key: 'Accept', value: 'application/json', enabled: true }],
+                                auth: { type: 'none' },
+                                body: { type: 'none', rawText: '', rawType: 'application/json', urlEncoded: [], formData: [] },
+                                preRequestScript: '',
+                                testsScript: 'pm.test("Status is 200 OK", () => pm.response.to.have.status(200));\npm.test("Returns 10 products", () => {\n  const json = pm.response.json();\n  pm.expect(json.products.length).to.eql(10);\n});'
+                            },
+                            {
+                                id: 'req_update_order',
+                                collectionId: 'col_init_my_api',
+                                name: 'Update Order Shipping Details',
+                                method: 'PATCH',
+                                url: 'https://dummyjson.com/orders/1',
+                                params: [],
+                                headers: [{ key: 'Content-Type', value: 'application/json', enabled: true }],
+                                auth: { type: 'none' },
+                                body: {
+                                    type: 'json',
+                                    rawText: '{\n  "shippingAddress": "123 Market St, Suite 400",\n  "status": "shipped"\n}',
+                                    rawType: 'application/json',
+                                    urlEncoded: [],
+                                    formData: []
+                                },
+                                preRequestScript: '',
+                                testsScript: 'pm.test("Status is 200 OK", () => pm.response.to.have.status(200));'
+                            }
+                        ]
                     }
-                ]
+                ],
+                requests: []
             }
         ]);
 
@@ -6347,19 +6373,20 @@ app.Run();`,
         const recentRequests = ref([]);
         const runnerSelectedCollectionId = ref((collections.value[0] ? collections.value[0].id : "col_default"));
 
-        const defaultReq = {
-            id: 'req_get_post',
-            name: 'Get Post #1',
-            method: 'GET',
-            url: 'https://jsonplaceholder.typicode.com/posts/1',
-            params: [],
-            headers: [{ key: 'Accept', value: 'application/json', enabled: true }],
-            auth: { type: 'none' },
-            body: { type: 'none', rawText: '' }
-        };
-        const initialReq = (collections.value[0] && collections.value[0].requests ? collections.value[0].requests[0] : null) || defaultReq;
-        const tabs = ref([{ id: 'tab_1', title: initialReq.name, type: 'request', request: JSON.parse(JSON.stringify(initialReq)) }]);
-        const activeTabId = ref('tab_1');
+        const req1 = collections.value[0]?.folders[0]?.requests[0];
+        const req2 = collections.value[0]?.folders[0]?.requests[1];
+        const req3 = collections.value[0]?.folders[0]?.requests[2];
+
+        const tabs = ref([
+            { id: 'tab_register', title: 'Register Account', type: 'register' },
+            ...(req3 ? [{ id: 'tab_' + req3.id, title: req3.name, type: 'request', method: req3.method, request: JSON.parse(JSON.stringify(req3)) }] : []),
+            ...(req2 ? [{ id: 'tab_' + req2.id, title: req2.name, type: 'request', method: req2.method, request: JSON.parse(JSON.stringify(req2)) }] : []),
+            ...(req1 ? [{ id: 'tab_' + req1.id, title: req1.name, type: 'request', method: req1.method, request: JSON.parse(JSON.stringify(req1)) }] : []),
+            { id: 'tab_websocket_client', title: 'WebSocket Client', type: 'websocket' },
+            { id: 'tab_graphql_explorer', title: 'GraphQL Explorer', type: 'graphql' },
+            { id: 'tab_system_architecture', title: 'System Architecture', type: 'architecture' }
+        ]);
+        const activeTabId = ref('tab_websocket_client');
         const activeTab = computed(() => tabs.value.find(t => t.id === activeTabId.value) || tabs.value[0] || null);
         const activeRequest = computed(() => {
             const t = tabs.value.find(tab => tab.id === activeTabId.value);

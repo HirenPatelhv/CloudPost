@@ -19,6 +19,7 @@ import { KeyValueItem } from '../../types';
 
 interface GraphQLExplorerProps {
   initialUrl?: string;
+  layoutMode?: 'columns' | 'rows';
 }
 
 const GRAPHQL_PRESETS = [
@@ -61,6 +62,7 @@ const GRAPHQL_PRESETS = [
 
 export const GraphQLExplorer: React.FC<GraphQLExplorerProps> = ({
   initialUrl = 'https://countries.trevorblades.com/',
+  layoutMode = 'columns',
 }) => {
   const [url, setUrl] = useState(initialUrl);
   const [query, setQuery] = useState(GRAPHQL_PRESETS[0].query);
@@ -261,9 +263,13 @@ export const GraphQLExplorer: React.FC<GraphQLExplorerProps> = ({
       </div>
 
       {/* Main Split: Left Editor, Right Response */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+      <div className={`flex-1 flex ${layoutMode === 'rows' ? 'flex-col' : 'flex-row'} overflow-hidden min-w-0`}>
         {/* Left: Query & Variables Editor */}
-        <div className="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-white/10 flex flex-col bg-[#0e101a]">
+        <div className={`overflow-hidden flex flex-col bg-[#0e101a] min-w-0 ${
+          layoutMode === 'rows'
+            ? 'w-full h-1/2 min-h-[260px] border-b border-white/10'
+            : 'w-full md:w-1/2 border-r border-white/10 h-full'
+        }`}>
           {/* Sub tabs: Query vs Variables vs Headers */}
           <div className="px-3 border-b border-white/10 bg-[#121624] flex items-center justify-between">
             <div className="flex items-center gap-1">

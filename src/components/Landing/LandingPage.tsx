@@ -31,7 +31,6 @@ import {
 } from 'lucide-react';
 import { executeRequest } from '../../services/apiRunner';
 import { ApiResponse } from '../../types';
-import { isDesktopTool } from '../../services/platformService';
 import { APP_VERSION_DISPLAY } from '../../config';
 
 interface LandingPageProps {
@@ -191,7 +190,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </button>
           )}
 
-          {!isDesktopTool() && onOpenDownloadPage && (
+          {onOpenDownloadPage && (
             <button
               onClick={onOpenDownloadPage}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-orange-500/20 to-amber-500/20 hover:from-orange-500/30 hover:to-amber-500/30 border border-orange-500/40 text-orange-300 hover:text-white rounded-lg text-xs font-bold transition-all cursor-pointer shadow-sm"
@@ -260,7 +259,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </button>
 
-          {!isDesktopTool() && onOpenDownloadPage && (
+          {onOpenDownloadPage && (
             <button
               onClick={onOpenDownloadPage}
               className="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-orange-500/15 via-amber-500/15 to-orange-600/15 hover:from-orange-500/25 hover:via-amber-500/25 hover:to-orange-600/25 border border-orange-500/40 text-orange-300 hover:text-white font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer"

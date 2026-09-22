@@ -32,19 +32,25 @@
         var t = e.target && e.target.closest ? e.target.closest('a') : null;
         if (t && t.hasAttribute('href') && !t.hasAttribute('data-real-href')) {
           var realHref = t.getAttribute('href');
-          t.setAttribute('data-real-href', realHref);
-          t.removeAttribute('href');
-          t.style.cursor = 'pointer';
-          t.addEventListener('click', function(ev) {
-            ev.preventDefault();
-            if (realHref && realHref !== '#' && realHref.trim() !== '' && !realHref.startsWith('javascript:')) {
-              if (t.target === '_blank') {
-                window.open(realHref, '_blank', 'noopener,noreferrer');
-              } else {
-                window.location.href = realHref;
+          if (realHref && !realHref.startsWith('javascript:')) {
+            t.setAttribute('data-real-href', realHref);
+            t.removeAttribute('href');
+            t.style.cursor = 'pointer';
+            t.addEventListener('click', function(ev) {
+              if (ev.defaultPrevented) return;
+              if (realHref && realHref !== '#' && realHref.trim() !== '') {
+                if (window.electronAPI && window.electronAPI.openExternal && /^https?:\/\//.test(realHref)) {
+                  ev.preventDefault();
+                  window.electronAPI.openExternal(realHref);
+                } else if (t.target === '_blank') {
+                  ev.preventDefault();
+                  window.open(realHref, '_blank', 'noopener,noreferrer');
+                } else if (!realHref.startsWith('#')) {
+                  window.location.href = realHref;
+                }
               }
-            }
-          });
+            });
+          }
         }
       }, true);
     </script>

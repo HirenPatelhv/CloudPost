@@ -999,7 +999,16 @@ function getStoredCollections($userId = null) {
 
     $file = getDataDir() . '/collections.json';
     if (file_exists($file)) {
-        return json_decode(@file_get_contents($file), true) ?: null;
+        $data = json_decode(@file_get_contents($file), true);
+        if (!empty($data)) return $data;
+    }
+
+    $initFile = __DIR__ . '/initialData.json';
+    if (file_exists($initFile)) {
+        $init = json_decode(@file_get_contents($initFile), true);
+        if (!empty($init['INITIAL_COLLECTIONS'])) {
+            return $init['INITIAL_COLLECTIONS'];
+        }
     }
     return null;
 }

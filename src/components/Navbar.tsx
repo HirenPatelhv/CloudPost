@@ -11,7 +11,6 @@ import {
 import { ScopedVariable, VariableScope } from '../services/variableService';
 import { QuickVariablePopover } from './Environments/QuickVariablePopover';
 import { offlineSyncService, SyncState } from '../services/offlineSyncService';
-import { isDesktopTool } from '../services/platformService';
 import { isSaaSAdmin } from '../services/saasService';
 import { APP_VERSION_DISPLAY } from '../config';
 import { 
@@ -465,12 +464,13 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* 10. Download Desktop App Button */}
-      {!isDesktopTool() && onOpenDownloadModal && (
+      {/* 10. Download Desktop App / Releases Button */}
+      {onOpenDownloadModal && (
         <button
           onClick={onOpenDownloadModal}
+          id="nav-download-desktop-btn"
           className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 bg-gradient-to-r from-orange-500/15 to-amber-500/15 hover:from-orange-500/25 hover:to-amber-500/25 border border-orange-500/35 text-orange-300 hover:text-white rounded-lg text-xs font-semibold transition-all shadow-sm cursor-pointer shrink-0 whitespace-nowrap"
-          title="Download CloudPost Desktop App (Windows, macOS, Linux)"
+          title="Download CloudPost Desktop App & Distributions (Windows, macOS, Linux, PHP)"
         >
           <Download className="w-3.5 h-3.5 text-orange-400 shrink-0" />
           <span className="whitespace-nowrap hidden sm:inline">Download</span>
@@ -538,17 +538,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               <LogIn className="w-3.5 h-3.5 text-orange-400 shrink-0" />
               <span className="whitespace-nowrap font-medium">Sign In</span>
             </button>
-            {!isDesktopTool() && (
-              <button
-                onClick={() => onOpenRegister ? onOpenRegister() : onOpenAuthModal()}
-                id="nav-register-btn"
-                className="h-8 inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-lg text-xs font-bold transition-all shadow-md shadow-orange-500/25 hover:shadow-orange-500/40 shrink-0 whitespace-nowrap cursor-pointer"
-                title="Create a CloudPost account"
-              >
-                <Sparkles className="w-3.5 h-3.5 shrink-0" />
-                <span className="whitespace-nowrap">Register</span>
-              </button>
-            )}
+            <button
+              onClick={() => onOpenRegister ? onOpenRegister() : onOpenAuthModal()}
+              id="nav-register-btn"
+              className="h-8 inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-lg text-xs font-bold transition-all shadow-md shadow-orange-500/25 hover:shadow-orange-500/40 shrink-0 whitespace-nowrap cursor-pointer"
+              title="Create a CloudPost account"
+            >
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              <span className="whitespace-nowrap">Register</span>
+            </button>
           </div>
         ) : (
           <button
@@ -577,8 +575,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
               </div>
 
-              {/* SaaS User features strictly gated to Web (PHP & React Web), excluded in Desktop Tools */}
-              {!isDesktopTool() && onOpenSaaSUsers && (
+              {/* SaaS User features accessible across Web & Desktop */}
+              {onOpenSaaSUsers && (
                 <button
                   onClick={() => {
                     setShowUserDropdown(false);
@@ -591,7 +589,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               )}
 
-              {!isDesktopTool() && onOpenSaaSReports && (
+              {onOpenSaaSReports && (
                 <button
                   onClick={() => {
                     setShowUserDropdown(false);
