@@ -12,14 +12,14 @@
     "desktop:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && cross-env ELECTRON_ENV=development electron .\"",
     "build:react": "node scripts/ensure-rollup.cjs && vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "prebuild:desktop": "node scripts/prepare-icons.cjs",
-    "build:desktop": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder && node scripts/stamp-exe-icon.cjs",
+    "build:desktop": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder -p never && node scripts/stamp-exe-icon.cjs",
     "build:all": "node scripts/build-desktop.cjs",
-    "build:win": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --win && node scripts/stamp-exe-icon.cjs",
-    "build:mac": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --mac",
-    "build:mac:arm": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --mac --arm64",
-    "build:mac:intel": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --mac --x64",
-    "build:mac:universal": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --mac --universal",
-    "build:mac:zip": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --mac zip",
+    "build:win": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --win -p never && node scripts/stamp-exe-icon.cjs",
+    "build:mac": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --mac --arm64 -p never && electron-builder --mac --x64 -p never",
+    "build:mac:arm": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --mac --arm64 -p never",
+    "build:mac:intel": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --mac --x64 -p never",
+    "build:mac:universal": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --mac --universal -p never",
+    "build:mac:zip": "node scripts/prepare-icons.cjs && npm run build:react && electron-builder --mac zip -p never",
     "build": "node scripts/ensure-rollup.cjs && vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
     "preview": "vite preview",
@@ -69,20 +69,14 @@
       "icon": "build/icon.icns",
       "category": "public.app-category.developer-tools",
       "target": [
-        {
-          "target": "dmg",
-          "arch": ["arm64", "x64"]
-        },
-        {
-          "target": "zip",
-          "arch": ["arm64", "x64"]
-        }
+        "dmg",
+        "zip"
       ],
       "darkModeSupport": true,
       "identity": null
     },
     "dmg": {
-      "title": "CloudPost ${version}",
+      "title": "CloudPost ${version} (${arch})",
       "contents": [
         {
           "x": 130,
