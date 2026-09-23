@@ -208,6 +208,11 @@ function createWindow() {
           accelerator: 'CmdOrCtrl+Shift+N',
           click: () => sendMenuAction('new-collection')
         },
+        {
+          label: 'Run Collection...',
+          accelerator: 'CmdOrCtrl+Shift+R',
+          click: () => sendMenuAction('open-runner')
+        },
         { type: 'separator' },
         {
           label: 'Import Collection...',
@@ -245,6 +250,11 @@ function createWindow() {
         {
           label: 'REST Request Builder',
           click: () => sendMenuAction('new-request')
+        },
+        {
+          label: 'Collection Runner & Tests',
+          accelerator: 'CmdOrCtrl+Alt+R',
+          click: () => sendMenuAction('open-runner')
         },
         {
           label: 'WebSocket Tester',

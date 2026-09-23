@@ -571,11 +571,11 @@ $initialView = (isset($_GET['view']) && $_GET['view'] === 'landing') ? 'landing'
 
         <!-- Main Body Area -->
         <div class="flex-1 flex overflow-hidden relative">
-            <!-- Mobile Backdrop for Sidebar Drawer (< lg) -->
-            <div v-if="isSidebarOpen" @click="isSidebarOpen = false" class="lg:hidden fixed inset-0 bg-black/60 z-30 transition-opacity backdrop-blur-sm"></div>
+            <!-- Mobile Backdrop for Sidebar Drawer (< md) -->
+            <div v-if="isSidebarOpen" @click="isSidebarOpen = false" class="md:hidden fixed inset-0 bg-black/60 z-30 transition-opacity backdrop-blur-sm"></div>
 
             <!-- Left Sidebar: 4 Tabs (Collections, Recent, Environments, Activity) Matching React -->
-            <aside v-if="isSidebarOpen" class="z-40 fixed inset-y-14 left-0 w-80 lg:static lg:w-72 xl:w-80 shrink-0 flex flex-col h-[calc(100vh-3.5rem)] lg:h-auto shadow-2xl lg:shadow-none bg-[#0c0e15] border-r border-white/10 transition-all select-none">
+            <aside v-if="isSidebarOpen" class="z-40 fixed inset-y-14 left-0 w-80 md:static md:w-72 xl:w-80 shrink-0 flex flex-col h-[calc(100vh-3.5rem)] md:h-auto shadow-2xl md:shadow-none bg-[#0c0e15] border-r border-white/10 transition-all select-none">
                 <!-- Sidebar Tab Switcher (4 Tabs Matching React) -->
                 <div class="flex items-center justify-between border-b border-white/10 bg-[#121520] p-1 text-[11px] shrink-0 gap-1">
                     <button @click="sidebarTab = 'collections'" 

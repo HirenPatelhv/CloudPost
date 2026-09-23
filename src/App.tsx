@@ -919,16 +919,18 @@ export default function App() {
     }
   };
 
-  const handleOpenRunner = (collection: Collection) => {
-    const existingRunnerTab = tabs.find(t => t.type === 'collection_runner' && t.collectionId === collection.id);
+  const handleOpenRunner = (collection?: Collection | null) => {
+    const targetCollection = collection || activeRequestCollection || workspaceCollections[0] || collections[0];
+    if (!targetCollection) return;
+    const existingRunnerTab = tabs.find(t => t.type === 'collection_runner' && t.collectionId === targetCollection.id);
     if (existingRunnerTab) {
       setActiveTabId(existingRunnerTab.id);
     } else {
       const newTab: TabItem = {
-        id: 'tab_runner_' + collection.id,
+        id: 'tab_runner_' + targetCollection.id,
         type: 'collection_runner',
-        title: `Runner: ${collection.name}`,
-        collectionId: collection.id,
+        title: `Runner: ${targetCollection.name}`,
+        collectionId: targetCollection.id,
       };
       setTabs([...tabs, newTab]);
       setActiveTabId(newTab.id);
@@ -1297,6 +1299,9 @@ export default function App() {
             break;
           case 'open-docs':
             handleOpenDocsTab();
+            break;
+          case 'open-runner':
+            handleOpenRunner();
             break;
           case 'import':
             setImportExportModalState({ isOpen: true, initialTab: 'import' });
@@ -2003,6 +2008,7 @@ export default function App() {
         onSelectWorkspace={id => setCurrentWorkspaceId(id)}
         onOpenCreateWorkspaceModal={handleOpenCreateWorkspace}
         onOpenShareModal={handleOpenShareModal}
+        onOpenRunner={() => handleOpenRunner()}
         onOpenEnvManager={() => setShowEnvManagerModal(true)}
         onOpenCreateVariableModal={() => handleOpenSetAsVariable('')}
         onQuickAddVariable={handleSaveNewVariable}
@@ -2034,12 +2040,18 @@ export default function App() {
         {/* Left Sidebar Drawer / Column */}
         {isSidebarOpen && (
           <>
-            {/* Mobile backdrop */}
-            <div 
-              className="lg:hidden fixed inset-0 bg-black/60 z-20 transition-opacity backdrop-blur-sm"
-              onClick={() => setIsSidebarOpen(false)}
-            />
-            <div className="z-30 fixed inset-y-14 left-0 w-80 lg:static lg:w-72 xl:w-80 shrink-0 flex flex-col h-[calc(100vh-3.5rem)] lg:h-auto shadow-2xl lg:shadow-none bg-[#0e111a] border-r border-white/10 transition-all">
+            {/* Mobile backdrop (only for small touch screens in web, never in desktop app) */}
+            {!isDesktopTool() && (
+              <div 
+                className="md:hidden fixed inset-0 bg-black/60 z-20 transition-opacity backdrop-blur-sm"
+                onClick={() => setIsSidebarOpen(false)}
+              />
+            )}
+            <div className={`z-30 shrink-0 flex flex-col transition-all bg-[#0e111a] border-r border-white/10 ${
+              isDesktopTool()
+                ? 'static w-72 xl:w-80 h-auto shadow-none'
+                : 'fixed inset-y-14 left-0 w-80 md:static md:w-72 xl:w-80 h-[calc(100vh-3.5rem)] md:h-auto shadow-2xl md:shadow-none'
+            }`}>
               <Sidebar
                 workspace={currentWorkspace}
                 collections={workspaceCollections}
@@ -2051,13 +2063,13 @@ export default function App() {
                 activeRequestId={activeRequestObj?.id}
                 onSelectRequest={req => {
                   handleSelectRequest(req);
-                  if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                  if (!isDesktopTool() && typeof window !== 'undefined' && window.innerWidth < 768) {
                     setIsSidebarOpen(false);
                   }
                 }}
                 onSelectRecentRequest={req => {
                   handleSelectRecentRequest(req);
-                  if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                  if (!isDesktopTool() && typeof window !== 'undefined' && window.innerWidth < 768) {
                     setIsSidebarOpen(false);
                   }
                 }}
@@ -2105,6 +2117,7 @@ export default function App() {
             onCloseTab={handleCloseTab}
             onNewRequestTab={handleNewRequestTab}
             onOpenArchitectureTab={handleOpenArchitectureTab}
+            onOpenRunnerTab={() => handleOpenRunner()}
             isSaaSAdmin={userIsSaaSAdmin}
             isSaaSUser={isSaaSUser}
             onOpenSaaSUsersTab={handleOpenSaaSUsersTab}

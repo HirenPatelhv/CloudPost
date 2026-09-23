@@ -35,6 +35,7 @@ interface TabsBarProps {
   onCloseTab: (tabId: string) => void;
   onNewRequestTab: () => void;
   onOpenArchitectureTab: () => void;
+  onOpenRunnerTab?: () => void;
   onOpenSaaSUsersTab?: () => void;
   onOpenSaaSReportsTab?: () => void;
   onOpenWebSocketTab?: () => void;
@@ -104,6 +105,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
   onCloseTab,
   onNewRequestTab,
   onOpenArchitectureTab,
+  onOpenRunnerTab,
   onOpenSaaSUsersTab,
   onOpenSaaSReportsTab,
   onOpenWebSocketTab,
@@ -310,6 +312,19 @@ export const TabsBar: React.FC<TabsBarProps> = ({
           </button>
         )}
 
+        {/* Collection Runner Direct Shortcut Button */}
+        {onOpenRunnerTab && (
+          <button
+            onClick={onOpenRunnerTab}
+            id="tabsbar-runner-btn"
+            className="h-8 inline-flex items-center gap-1.5 px-2.5 bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-orange-300 rounded-lg text-xs font-semibold transition-colors shrink-0 whitespace-nowrap cursor-pointer shadow-sm"
+            title="Collection Runner & Automated API Tests"
+          >
+            <Play className="w-3.5 h-3.5 text-orange-400 fill-orange-400 shrink-0" />
+            <span className="text-xs whitespace-nowrap">Runner</span>
+          </button>
+        )}
+
         {/* Tools Dropdown for compact, clean header */}
         <div className="relative shrink-0" ref={toolsDropdownRef}>
           <button
@@ -327,6 +342,16 @@ export const TabsBar: React.FC<TabsBarProps> = ({
               <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
                 CloudPost Tools
               </div>
+
+              {onOpenRunnerTab && (
+                <button
+                  onClick={() => { setShowToolsDropdown(false); onOpenRunnerTab(); }}
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-orange-300 hover:text-white hover:bg-white/5 text-left transition-colors font-medium"
+                >
+                  <Play className="w-3.5 h-3.5 text-orange-400 fill-orange-400" />
+                  <span>Collection Runner & Tests</span>
+                </button>
+              )}
 
               {onOpenWebSocketTab && (
                 <button

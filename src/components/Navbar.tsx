@@ -12,6 +12,7 @@ import { ScopedVariable, VariableScope } from '../services/variableService';
 import { QuickVariablePopover } from './Environments/QuickVariablePopover';
 import { offlineSyncService, SyncState } from '../services/offlineSyncService';
 import { isSaaSAdmin } from '../services/saasService';
+import { isDesktopTool } from '../services/platformService';
 import { APP_VERSION_DISPLAY } from '../config';
 import { 
   Layers, 
@@ -21,6 +22,7 @@ import {
   Eye, 
   Settings, 
   Plus, 
+  Play,
   Share2, 
   ShieldCheck, 
   ShieldAlert, 
@@ -67,6 +69,7 @@ interface NavbarProps {
   onSelectWorkspace: (workspaceId: string) => void;
   onOpenCreateWorkspaceModal: () => void;
   onOpenShareModal: () => void;
+  onOpenRunner?: () => void;
   onOpenEnvManager: () => void;
   onOpenCreateVariableModal: () => void;
   onQuickAddVariable: (target: { scope: VariableScope; targetId: string; variable: Variable }) => void;
@@ -107,6 +110,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSelectWorkspace,
   onOpenCreateWorkspaceModal,
   onOpenShareModal,
+  onOpenRunner,
   onOpenEnvManager,
   onOpenCreateVariableModal,
   onQuickAddVariable,
@@ -282,16 +286,29 @@ export const Navbar: React.FC<NavbarProps> = ({
         )}
       </div>
 
-      {/* 4. Guest Mode Pill (Keep only Guest Mode) */}
+      {/* 3.1 Collection Runner Button (Matching PHP & Direct Access) */}
+      {onOpenRunner && (
+        <button
+          onClick={onOpenRunner}
+          id="nav-runner-btn"
+          className="h-8 inline-flex items-center gap-1.5 px-2.5 sm:px-3 rounded-lg bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-xs font-semibold text-orange-300 transition-colors shrink-0 whitespace-nowrap cursor-pointer shadow-sm"
+          title="Collection Runner & Automated API Tests"
+        >
+          <Play className="w-3.5 h-3.5 text-orange-400 fill-orange-400 shrink-0" />
+          <span className="whitespace-nowrap hidden sm:inline">Runner</span>
+        </button>
+      )}
+
+      {/* 4. Guest Mode Pill */}
       {isGuest ? (
-        <div className="h-8 inline-flex items-center gap-1.5 px-2.5 sm:px-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs shrink-0 whitespace-nowrap" title="Guest Mode">
+        <div className="h-8 items-center gap-1.5 px-2.5 sm:px-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs shrink-0 whitespace-nowrap hidden md:inline-flex" title="Guest Mode">
           <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
           <span className="text-[11px] font-medium whitespace-nowrap">Guest Mode</span>
         </div>
       ) : (
-        <div className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs shrink-0 whitespace-nowrap">
+        <div className="h-8 items-center gap-1.5 px-2.5 sm:px-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs shrink-0 whitespace-nowrap hidden md:inline-flex">
           <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-          <span className="text-[11px] font-medium hidden sm:inline whitespace-nowrap">Synced</span>
+          <span className="text-[11px] font-medium whitespace-nowrap">Synced</span>
         </div>
       )}
 
@@ -464,8 +481,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* 10. Download Desktop App / Releases Button */}
-      {onOpenDownloadModal && (
+      {/* 10. Download Desktop App / Releases Button (Only when not in desktop tool) */}
+      {!isDesktopTool() && onOpenDownloadModal && (
         <button
           onClick={onOpenDownloadModal}
           id="nav-download-desktop-btn"
@@ -477,10 +494,11 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
       )}
 
-      {/* 11. Docs & Manual Button (Exclusive to SaaS Users) */}
-      {userIsSaaSUser && onOpenDocsTab && (
+      {/* 11. Docs & Manual Button */}
+      {onOpenDocsTab && (
         <button
           onClick={onOpenDocsTab}
+          id="nav-docs-btn"
           className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 bg-zinc-800/80 hover:bg-zinc-700/80 border border-white/10 text-zinc-300 hover:text-white rounded-lg text-xs font-semibold transition-all shadow-sm cursor-pointer shrink-0 whitespace-nowrap"
           title="Open Documentation, User Manuals & Architecture Guides"
         >
