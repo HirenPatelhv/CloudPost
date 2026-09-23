@@ -3,13 +3,9 @@ name: Build CloudPost Multi-Platform Desktop
 on:
   push:
     branches: [ main, master ]
-    tags: [ 'v*' ]
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   build-mac:
@@ -86,32 +82,3 @@ jobs:
           name: CloudPost-Windows
           path: |
             dist_desktop/*.exe
-
-  publish-release:
-    name: Create GitHub Release
-    needs: [build-mac, build-windows]
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download macOS Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: CloudPost-macOS
-          path: release_artifacts
-
-      - name: Download Windows Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: CloudPost-Windows
-          path: release_artifacts
-
-      - name: Publish to GitHub Releases
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            release_artifacts/*.dmg
-            release_artifacts/*.zip
-            release_artifacts/*.exe
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
