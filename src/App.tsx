@@ -710,6 +710,10 @@ export default function App() {
 
   const handleConfirmResetGuestSession = () => {
     setShowGuestResetConfirmModal(false);
+    if (currentUser) {
+      setCurrentUser(null);
+      localStorage.removeItem('cp_auth_user');
+    }
     const newGuest = resetGuestSession();
     setGuestId(newGuest);
     const newShortCode = getGuestShortCode(newGuest);
@@ -1180,8 +1184,7 @@ export default function App() {
   };
 
   const handleSwitchToGuest = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('cp_auth_user');
+    setShowGuestResetConfirmModal(true);
   };
 
   const handleRegisterSuccess = (user: User, shouldMigrateData: boolean = true) => {
@@ -1312,6 +1315,9 @@ export default function App() {
             break;
           case 'open-register':
             handleOpenRegisterTab();
+            break;
+          case 'reset-guest':
+            setShowGuestResetConfirmModal(true);
             break;
           case 'open-auth':
             setShowAuthModal(true);
@@ -2115,6 +2121,9 @@ export default function App() {
                 onOpenMockServerTab={handleOpenMockServerTab}
                 onOpenGraphQLTab={handleOpenGraphQLTab}
                 onOpenMonitorTab={handleOpenMonitorTab}
+                onOpenRegister={handleOpenRegisterTab}
+                onResetGuestSession={() => setShowGuestResetConfirmModal(true)}
+                isGuest={isGuest}
               />
             </div>
           </>
@@ -2147,6 +2156,9 @@ export default function App() {
             onOpenHelpModal={() => setShowHelpModal(true)}
             onOpenDiffTab={handleOpenDiffTab}
             onOpenRegisterTab={handleOpenRegisterTab}
+            onOpenImport={handleOpenImportModal}
+            onResetGuestSession={() => setShowGuestResetConfirmModal(true)}
+            isGuest={isGuest}
             isSidebarOpen={isSidebarOpen}
             onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
             layoutMode={layoutMode}

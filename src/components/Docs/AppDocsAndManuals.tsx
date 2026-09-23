@@ -424,6 +424,30 @@ export const AppDocsAndManuals: React.FC<AppDocsAndManualsProps> = ({
                               </li>
                             </ul>
                           </div>
+
+                          {/* Windows Defender SmartScreen & Publisher Note */}
+                          <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg text-[11px] text-blue-200 font-sans space-y-2">
+                            <div className="font-bold text-white flex items-center justify-between">
+                              <span className="flex items-center gap-1.5">
+                                <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
+                                <span>Windows Defender SmartScreen & Publisher Information:</span>
+                              </span>
+                              <span className="font-mono text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">
+                                Publisher: Tech Vision Studio
+                              </span>
+                            </div>
+                            <p className="text-zinc-300">
+                              When launching the Windows installer or portable binary on a fresh machine, Microsoft Defender SmartScreen may display <em>"Windows protected your PC"</em>.
+                            </p>
+                            <div className="flex flex-wrap items-center gap-2 text-zinc-300 bg-black/40 p-2 rounded">
+                              <span className="text-white font-semibold">To launch:</span>
+                              <span>1. Click <u>"More info"</u></span>
+                              <span className="text-zinc-500">→</span>
+                              <span>2. Verify publisher is <strong className="text-amber-300">Tech Vision Studio</strong></span>
+                              <span className="text-zinc-500">→</span>
+                              <span>3. Click <strong className="text-emerald-400">"Run anyway"</strong></span>
+                            </div>
+                          </div>
                         </div>
 
                         {onOpenDownloadModal && (

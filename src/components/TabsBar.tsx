@@ -23,7 +23,10 @@ import {
   BookOpen,
   GitCompare,
   HelpCircle,
-  Loader2
+  Loader2,
+  Upload,
+  RotateCcw,
+  ShieldAlert
 } from 'lucide-react';
 
 interface TabsBarProps {
@@ -48,6 +51,9 @@ interface TabsBarProps {
   onOpenHelpModal?: () => void;
   onOpenDiffTab?: () => void;
   onOpenRegisterTab?: () => void;
+  onOpenImport?: () => void;
+  onResetGuestSession?: () => void;
+  isGuest?: boolean;
   isSidebarOpen?: boolean;
   onToggleSidebar?: () => void;
   layoutMode?: 'columns' | 'rows';
@@ -119,6 +125,9 @@ export const TabsBar: React.FC<TabsBarProps> = ({
   onOpenHelpModal,
   onOpenDiffTab,
   onOpenRegisterTab,
+  onOpenImport,
+  onResetGuestSession,
+  isGuest,
   isSidebarOpen = true,
   onToggleSidebar,
   layoutMode = 'columns',
@@ -327,30 +336,76 @@ export const TabsBar: React.FC<TabsBarProps> = ({
           </button>
         )}
 
-        {/* Tools Dropdown for compact, clean header */}
+        {/* Tools Dropdown for compact, accessible header */}
         <div className="relative shrink-0" ref={toolsDropdownRef}>
           <button
             onClick={() => setShowToolsDropdown(!showToolsDropdown)}
-            className="h-8 inline-flex items-center gap-1 px-2.5 bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-orange-300 rounded-lg text-xs font-semibold transition-colors shrink-0 whitespace-nowrap"
-            title="Open API & Platform Tools"
+            id="tabsbar-tools-btn"
+            className="h-8 inline-flex items-center gap-1.5 px-2.5 bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-orange-300 rounded-lg text-xs font-semibold transition-colors shrink-0 whitespace-nowrap cursor-pointer shadow-sm"
+            title="Open Tools (Protocols, Register, Restore, Runner)"
           >
             <Sparkles className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-            <span className="text-xs whitespace-nowrap">Tools</span>
+            <span className="text-xs whitespace-nowrap font-semibold">Tools</span>
             <ChevronDown className="w-3 h-3 text-orange-400/80 shrink-0" />
           </button>
 
           {showToolsDropdown && (
-            <div className="absolute right-0 top-full mt-1.5 w-56 bg-[#141824] border border-white/10 rounded-xl shadow-2xl z-50 p-2 space-y-1 text-xs">
-              <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
-                CloudPost Tools
+            <div className="absolute right-0 top-full mt-1.5 w-64 max-h-[82vh] overflow-y-auto bg-[#141824] border border-white/10 rounded-xl shadow-2xl z-50 p-2 space-y-1 text-xs no-scrollbar">
+              <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-orange-400/90 flex items-center justify-between border-b border-white/5 pb-1.5 mb-1">
+                <span>Tools & Protocols</span>
+                <span className="text-[9px] font-mono text-zinc-400 bg-white/5 px-1.5 py-0.5 rounded">Suite</span>
               </div>
+
+              {/* Top Featured Actions: Register & Restore / Import */}
+              {onOpenRegisterTab && (
+                <button
+                  onClick={() => { setShowToolsDropdown(false); onOpenRegisterTab(); }}
+                  id="tools-register-btn"
+                  className="w-full flex items-center justify-between p-2 rounded-lg bg-gradient-to-r from-amber-500/15 to-orange-500/15 hover:from-amber-500/25 hover:to-orange-500/25 text-amber-200 hover:text-white border border-amber-500/30 text-left transition-colors font-semibold"
+                >
+                  <div className="flex items-center gap-2">
+                    <UserPlus className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <span>Register Account</span>
+                  </div>
+                  <span className="text-[9px] font-mono bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded border border-amber-500/30">Free</span>
+                </button>
+              )}
+
+              {onOpenImport && (
+                <button
+                  onClick={() => { setShowToolsDropdown(false); onOpenImport(); }}
+                  id="tools-restore-btn"
+                  className="w-full flex items-center justify-between p-2 rounded-lg text-emerald-300 hover:text-white hover:bg-emerald-500/10 text-left transition-colors font-semibold"
+                  title="Restore collections and workspaces from backup or JSON files"
+                >
+                  <div className="flex items-center gap-2">
+                    <RotateCcw className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>Restore / Import Data</span>
+                  </div>
+                  <span className="text-[9px] font-mono text-zinc-400">JSON/Zip</span>
+                </button>
+              )}
+
+              {isGuest && onResetGuestSession && (
+                <button
+                  onClick={() => { setShowToolsDropdown(false); onResetGuestSession(); }}
+                  id="tools-guest-session-btn"
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-amber-300 hover:bg-amber-500/10 text-left transition-colors"
+                  title="Change Guest User Session (opens confirmation first)"
+                >
+                  <ShieldAlert className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span>Change Guest User...</span>
+                </button>
+              )}
+
+              <div className="pt-1 border-t border-white/5 my-1"></div>
 
               {onOpenRunnerTab && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenRunnerTab(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-orange-300 hover:text-white hover:bg-white/5 text-left transition-colors font-medium"
                 >
-                  <Play className="w-3.5 h-3.5 text-orange-400 fill-orange-400" />
+                  <Play className="w-3.5 h-3.5 text-orange-400 fill-orange-400 shrink-0" />
                   <span>Collection Runner & Tests</span>
                 </button>
               )}
@@ -360,7 +415,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                   onClick={() => { setShowToolsDropdown(false); onOpenWebSocketTab(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
                 >
-                  <Radio className="w-3.5 h-3.5 text-emerald-400" />
+                  <Radio className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                   <span>WebSocket Tester</span>
                 </button>
               )}
@@ -370,7 +425,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                   onClick={() => { setShowToolsDropdown(false); onOpenMockServerTab(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
                 >
-                  <Server className="w-3.5 h-3.5 text-amber-400" />
+                  <Server className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                   <span>Mock Server Engine</span>
                 </button>
               )}
@@ -380,7 +435,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                   onClick={() => { setShowToolsDropdown(false); onOpenGraphQLTab(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
                 >
-                  <Code2 className="w-3.5 h-3.5 text-pink-400" />
+                  <Code2 className="w-3.5 h-3.5 text-pink-400 shrink-0" />
                   <span>GraphQL Explorer</span>
                 </button>
               )}
@@ -390,7 +445,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                   onClick={() => { setShowToolsDropdown(false); onOpenMonitorTab(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
                 >
-                  <Activity className="w-3.5 h-3.5 text-teal-400" />
+                  <Activity className="w-3.5 h-3.5 text-teal-400 shrink-0" />
                   <span>Monitors & Health</span>
                 </button>
               )}
@@ -400,7 +455,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                   onClick={() => { setShowToolsDropdown(false); onOpenSSETab(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
                 >
-                  <Radio className="w-3.5 h-3.5 text-orange-400" />
+                  <Radio className="w-3.5 h-3.5 text-orange-400 shrink-0" />
                   <span>SSE Stream Tester</span>
                 </button>
               )}
@@ -410,7 +465,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                   onClick={() => { setShowToolsDropdown(false); onOpenGRPCTab(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
                 >
-                  <Server className="w-3.5 h-3.5 text-cyan-400" />
+                  <Server className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                   <span>gRPC Protocol Explorer</span>
                 </button>
               )}
@@ -420,7 +475,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                   onClick={() => { setShowToolsDropdown(false); onOpenDocsTab(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
                 >
-                  <BookOpen className="w-3.5 h-3.5 text-amber-400" />
+                  <BookOpen className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                   <span>Documentation & User Manuals</span>
                 </button>
               )}
@@ -430,7 +485,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                   onClick={() => { setShowToolsDropdown(false); onOpenHelpModal(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
                 >
-                  <HelpCircle className="w-3.5 h-3.5 text-orange-400" />
+                  <HelpCircle className="w-3.5 h-3.5 text-orange-400 shrink-0" />
                   <span>User Guide</span>
                 </button>
               )}
@@ -440,18 +495,8 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                   onClick={() => { setShowToolsDropdown(false); onOpenDiffTab(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
                 >
-                  <GitCompare className="w-3.5 h-3.5 text-emerald-400" />
+                  <GitCompare className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                   <span>Response Diff Inspector</span>
-                </button>
-              )}
-
-              {onOpenRegisterTab && (
-                <button
-                  onClick={() => { setShowToolsDropdown(false); onOpenRegisterTab(); }}
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-amber-300 hover:text-white hover:bg-amber-500/10 text-left transition-colors font-semibold border-t border-white/5 mt-1"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Register Account</span>
                 </button>
               )}
 
@@ -460,7 +505,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                   onClick={() => { setShowToolsDropdown(false); onOpenSaaSUsersTab(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
                 >
-                  <Users className="w-3.5 h-3.5 text-orange-400" />
+                  <Users className="w-3.5 h-3.5 text-orange-400 shrink-0" />
                   <span>SaaS Users & Costs</span>
                 </button>
               )}
@@ -470,7 +515,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                   onClick={() => { setShowToolsDropdown(false); onOpenSaaSReportsTab(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
                 >
-                  <TrendingUp className="w-3.5 h-3.5 text-purple-400" />
+                  <TrendingUp className="w-3.5 h-3.5 text-purple-400 shrink-0" />
                   <span>SaaS Revenue Reports</span>
                 </button>
               )}
@@ -481,7 +526,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                     onClick={() => { setShowToolsDropdown(false); onOpenArchitectureTab(); }}
                     className="w-full flex items-center gap-2 p-2 rounded-lg text-orange-300 hover:text-orange-200 hover:bg-white/5 text-left transition-colors font-medium"
                   >
-                    <Sparkles className="w-3.5 h-3.5 text-orange-400" />
+                    <Sparkles className="w-3.5 h-3.5 text-orange-400 shrink-0" />
                     <span>Architecture & Schema</span>
                   </button>
                 </div>

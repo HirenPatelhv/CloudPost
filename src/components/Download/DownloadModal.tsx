@@ -130,6 +130,10 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 font-semibold">
                   v{currentRelease?.version || '2.4.0'} Latest
                 </span>
+                <span className="hidden sm:inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-300 border border-orange-500/30 font-semibold">
+                  <ShieldCheck className="w-3 h-3 text-orange-400" />
+                  Publisher: Tech Vision Studio
+                </span>
               </div>
               <p className="text-xs text-zinc-400 mt-0.5">
                 Native Desktop Applications & Turnkey PHP Shared Hosting
@@ -345,10 +349,41 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
                 </div>
               </div>
 
+              {/* Windows SmartScreen Guidance Box */}
+              <div className="p-3.5 rounded-xl bg-blue-950/30 border border-blue-500/30 flex flex-col gap-2.5 text-xs">
+                <div className="flex items-center justify-between gap-2 text-blue-300 font-bold">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-blue-400 shrink-0" />
+                    <span>Windows SmartScreen First Launch Guide</span>
+                  </div>
+                  <span className="text-[10px] font-mono bg-blue-500/20 text-blue-200 px-2 py-0.5 rounded border border-blue-500/30">
+                    Publisher: Tech Vision Studio
+                  </span>
+                </div>
+                <p className="text-zinc-300 text-[11.5px] leading-relaxed">
+                  On newly released distributions, Microsoft Defender SmartScreen may display <em>"Windows protected your PC"</em>. This is standard for independent developer software.
+                </p>
+                <div className="flex flex-wrap items-center gap-2 text-[11px] text-zinc-300 bg-black/40 p-2.5 rounded-lg border border-white/5">
+                  <span className="px-2 py-0.5 rounded bg-blue-500/30 text-blue-200 font-bold">Step 1</span>
+                  <span>Click <strong className="text-white underline underline-offset-2">"More info"</strong></span>
+                  <span className="text-zinc-500 font-bold">→</span>
+                  <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-200 font-bold">Step 2</span>
+                  <span>Confirm Publisher: <strong className="text-amber-300">Tech Vision Studio</strong></span>
+                  <span className="text-zinc-500 font-bold">→</span>
+                  <span className="px-2 py-0.5 rounded bg-emerald-500/30 text-emerald-200 font-bold">Step 3</span>
+                  <span>Click <strong className="text-emerald-400">"Run anyway"</strong></span>
+                </div>
+              </div>
+
               {/* Requirement Note */}
-              <div className="text-[11px] text-zinc-400 flex items-center gap-2 bg-[#0a0d17] p-2.5 rounded-lg border border-white/5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Supports Windows 10, Windows 11, and Windows Server 2019+. 64-bit architecture.</span>
+              <div className="text-[11px] text-zinc-400 flex items-center justify-between gap-2 bg-[#0a0d17] p-2.5 rounded-lg border border-white/5">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>Supports Windows 10, Windows 11, and Windows Server 2019+. 64-bit architecture.</span>
+                </div>
+                <span className="text-zinc-400 font-mono text-[10px]">
+                  Publisher: <strong className="text-orange-400 font-semibold">Tech Vision Studio</strong>
+                </span>
               </div>
             </div>
           )}
@@ -651,11 +686,15 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
 
         {/* Modal Bottom Footer */}
         <div className="px-6 py-3.5 bg-[#0a0d17] border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs shrink-0">
-          <div className="flex items-center gap-3 text-zinc-400">
-            <span className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-2.5 text-zinc-400">
+            <span className="flex items-center gap-1.5 text-zinc-300">
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-              All binaries signed & SHA-256 verified
+              Publisher: <strong className="text-orange-400 font-semibold ml-0.5">Tech Vision Studio</strong>
             </span>
+            <span className="text-zinc-600 hidden sm:inline">•</span>
+            <span>All binaries SHA-256 verified</span>
+            <span className="text-zinc-600 hidden sm:inline">•</span>
+            <span className="text-zinc-500">© 2026 Tech Vision Studio</span>
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto">

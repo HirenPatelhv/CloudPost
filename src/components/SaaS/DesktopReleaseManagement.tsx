@@ -114,7 +114,7 @@ export const DesktopReleaseManagement: React.FC = () => {
         releaseNotes: releaseNotes || 'System optimizations and engine updates.',
         channel,
         isMandatory,
-        uploadedBy: 'SaaS SuperAdmin (hirenpatelhv@gmail.com)',
+        uploadedBy: 'Tech Vision Studio (hirenpatelhv@gmail.com)',
         windowsSha256: calculatedSha256 || undefined
       });
 
@@ -159,7 +159,7 @@ export const DesktopReleaseManagement: React.FC = () => {
           {/* Current Live Version Tag */}
           <div className="flex items-center gap-3 bg-[#0a0d17] p-3 rounded-xl border border-white/10 shrink-0">
             <div>
-              <div className="text-[10px] text-zinc-400 font-mono uppercase">Current Active Fleet Version</div>
+              <div className="text-[10px] text-zinc-400 font-mono uppercase">Publisher: Tech Vision Studio</div>
               <div className="text-base font-extrabold text-amber-400 font-mono">
                 v{currentVersion}
               </div>

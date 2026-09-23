@@ -38,7 +38,9 @@ import {
   History,
   Share2,
   Radio,
-  Server
+  Server,
+  Sparkles,
+  UserPlus
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -74,6 +76,9 @@ interface SidebarProps {
   onOpenMockServerTab?: () => void;
   onOpenGraphQLTab?: () => void;
   onOpenMonitorTab?: () => void;
+  onOpenRegister?: () => void;
+  onResetGuestSession?: () => void;
+  isGuest?: boolean;
 }
 
 function formatRelativeTime(dateString: string): string {
@@ -127,6 +132,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenMockServerTab,
   onOpenGraphQLTab,
   onOpenMonitorTab,
+  onOpenRegister,
+  onResetGuestSession,
+  isGuest,
 }) => {
   const [activeTab, setActiveTab] = useState<'collections' | 'recent' | 'environments' | 'activity'>('collections');
   const [searchQuery, setSearchQuery] = useState('');
@@ -1025,11 +1033,50 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       )}
 
-      {/* Postman-Grade Protocols & Engines Footer */}
+      {/* Tools & Protocols Footer */}
       <div className="p-2.5 border-t border-white/10 bg-[#0c0e16] shrink-0">
-        <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1.5 px-1">
-          Postman Suite Tools
+        <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1.5 px-1 flex items-center justify-between">
+          <span>Tools</span>
+          <span className="text-[9px] font-mono text-zinc-500">Suite</span>
         </div>
+
+        {/* Restore & Register Quick Action Row */}
+        <div className="grid grid-cols-2 gap-1.5 mb-1.5">
+          {onOpenImportModal && (
+            <button
+              onClick={onOpenImportModal}
+              id="sidebar-restore-btn"
+              className="flex items-center justify-center gap-1.5 px-2 py-1.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 hover:text-white border border-emerald-500/25 transition-colors text-[11px] font-semibold truncate shadow-sm cursor-pointer"
+              title="Restore / Import Workspaces & Collections"
+            >
+              <RotateCcw className="w-3 h-3 text-emerald-400 shrink-0" />
+              <span className="truncate">Restore / Import</span>
+            </button>
+          )}
+
+          {isGuest && onOpenRegister ? (
+            <button
+              onClick={onOpenRegister}
+              id="sidebar-register-btn"
+              className="flex items-center justify-center gap-1.5 px-2 py-1.5 rounded bg-gradient-to-r from-amber-500/15 to-orange-500/15 hover:from-amber-500/25 hover:to-orange-500/25 text-amber-200 hover:text-white border border-amber-500/30 transition-colors text-[11px] font-semibold truncate shadow-sm cursor-pointer"
+              title="Register New Account"
+            >
+              <UserPlus className="w-3 h-3 text-amber-400 shrink-0" />
+              <span className="truncate">Register</span>
+            </button>
+          ) : isGuest && onResetGuestSession ? (
+            <button
+              onClick={onResetGuestSession}
+              id="sidebar-guest-btn"
+              className="flex items-center justify-center gap-1.5 px-2 py-1.5 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 hover:text-white border border-amber-500/25 transition-colors text-[11px] font-medium truncate cursor-pointer"
+              title="Change Guest User Session (opens confirmation first)"
+            >
+              <ShieldAlert className="w-3 h-3 text-amber-400 shrink-0" />
+              <span className="truncate">Guest User</span>
+            </button>
+          ) : null}
+        </div>
+
         <div className="grid grid-cols-2 gap-1.5">
           {onOpenWebSocketTab && (
             <button

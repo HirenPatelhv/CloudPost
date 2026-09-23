@@ -24,7 +24,10 @@ async function stampExe() {
       'version-string': {
         ProductName: 'CloudPost',
         FileDescription: 'CloudPost API Platform',
-        CompanyName: 'CloudPost Team'
+        CompanyName: 'Tech Vision Studio',
+        LegalCopyright: 'Copyright © 2026 Tech Vision Studio. All rights reserved.',
+        OriginalFilename: 'CloudPost.exe',
+        InternalName: 'CloudPost'
       }
     });
     console.log('✓ Successfully stamped CloudPost icon directly into CloudPost.exe!');

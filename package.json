@@ -1,7 +1,8 @@
 {
   "name": "cloudpost",
-  "description": "CloudPost Desktop - API Development and Testing Platform",
-  "author": "CloudPost Team",
+  "description": "CloudPost Desktop - API Development and Testing Platform by Tech Vision Studio",
+  "author": "Tech Vision Studio",
+  "publisher": "Tech Vision Studio",
   "private": true,
   "version": "2.4.0",
   "type": "module",
@@ -26,8 +27,9 @@
     "lint": "tsc --noEmit"
   },
   "build": {
-    "appId": "com.cloudpost.desktop",
+    "appId": "com.techvisionstudio.cloudpost",
     "productName": "CloudPost",
+    "copyright": "Copyright © 2026 Tech Vision Studio. All rights reserved.",
     "directories": {
       "output": "dist_desktop"
     },
@@ -41,6 +43,11 @@
     "icon": "build/icon.png",
     "win": {
       "icon": "build/icon.ico",
+      "publisherName": [
+        "Tech Vision Studio"
+      ],
+      "legalTrademarks": "Tech Vision Studio",
+      "verifyUpdateCodeSignature": false,
       "target": [
         "nsis",
         "portable"
@@ -55,7 +62,8 @@
       "installerHeaderIcon": "build/icon.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "CloudPost"
+      "shortcutName": "CloudPost",
+      "uninstallDisplayName": "CloudPost by Tech Vision Studio"
     },
     "mac": {
       "icon": "build/icon.icns",

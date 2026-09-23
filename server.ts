@@ -2652,7 +2652,7 @@ app.get("/api/desktop/download/:platform", async (req, res) => {
 
       zip.file(
         "README-DESKTOP.txt",
-        `CloudPost Desktop Portable Edition v${version}\n\nQuick Start:\n1. Windows: Double-click 'run-cloudpost-windows.bat'\n2. macOS/Linux: Run 'chmod +x run-cloudpost-unix.sh && ./run-cloudpost-unix.sh'\n\nFeatures Included:\n- Collection Runner & Tests\n- Full REST / WebSocket / GraphQL / SSE / gRPC Protocol Studio\n- Complete Offline Data Storage\n- 100% CORS-Free Direct API Execution\n`
+        `CloudPost Desktop Portable Edition v${version}\nPublisher: Tech Vision Studio\nCopyright © 2026 Tech Vision Studio. All rights reserved.\n\nQuick Start:\n1. Windows: Double-click 'run-cloudpost-windows.bat'\n2. macOS/Linux: Run 'chmod +x run-cloudpost-unix.sh && ./run-cloudpost-unix.sh'\n\nWindows SmartScreen Notice:\nWhen launching for the first time, Windows Defender SmartScreen may display 'Windows protected your PC'.\nClick 'More info' -> 'Run anyway'.\nPublisher: Tech Vision Studio\n\nFeatures Included:\n- Collection Runner & Tests\n- Full REST / WebSocket / GraphQL / SSE / gRPC Protocol Studio\n- Complete Offline Data Storage\n- 100% CORS-Free Direct API Execution\n`
       );
 
       const zipBuffer = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });

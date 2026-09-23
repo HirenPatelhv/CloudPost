@@ -12,7 +12,16 @@ app.setName('CloudPost');
 
 // Ensure Windows taskbar groups and displays the custom CloudPost icon instead of the default Electron icon
 if (process.platform === 'win32') {
-  app.setAppUserModelId('com.cloudpost.desktop');
+  app.setAppUserModelId('com.techvisionstudio.cloudpost');
+}
+
+if (app.setAboutPanelOptions) {
+  app.setAboutPanelOptions({
+    applicationName: 'CloudPost',
+    applicationVersion: '2.4.0',
+    copyright: 'Copyright © 2026 Tech Vision Studio. All rights reserved.',
+    authors: ['Tech Vision Studio']
+  });
 }
 
 let mainWindow;
@@ -245,10 +254,26 @@ function createWindow() {
       ]
     },
     {
-      label: 'API Tools',
+      label: 'Tools',
       submenu: [
         {
+          label: 'Register New Account...',
+          accelerator: 'CmdOrCtrl+Shift+U',
+          click: () => sendMenuAction('open-register')
+        },
+        {
+          label: 'Restore Workspaces / Import...',
+          accelerator: 'CmdOrCtrl+O',
+          click: () => sendMenuAction('import')
+        },
+        {
+          label: 'Change Guest Session...',
+          click: () => sendMenuAction('reset-guest')
+        },
+        { type: 'separator' },
+        {
           label: 'REST Request Builder',
+          accelerator: 'CmdOrCtrl+N',
           click: () => sendMenuAction('new-request')
         },
         {
@@ -309,9 +334,18 @@ function createWindow() {
           click: () => sendMenuAction('open-register')
         },
         {
+          label: 'Restore Workspaces / Import...',
+          click: () => sendMenuAction('import')
+        },
+        {
           label: 'Sign In...',
           accelerator: 'CmdOrCtrl+U',
           click: () => sendMenuAction('open-auth')
+        },
+        { type: 'separator' },
+        {
+          label: 'Change Guest Session...',
+          click: () => sendMenuAction('reset-guest')
         }
       ]
     },

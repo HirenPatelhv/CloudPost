@@ -1,6 +1,8 @@
 <?php
 /**
  * CloudPost API Studio - Pure PHP Edition
+ * Publisher: Tech Vision Studio
+ * Copyright (c) 2026 Tech Vision Studio. All rights reserved.
  * 100% Shared Hosting Compatible (cPanel, XAMPP, Apache, Nginx, Plesk)
  * Complete Postman-grade API development suite with Zero Build Steps.
  */
@@ -67,6 +69,8 @@ $initialView = (isset($_GET['view']) && $_GET['view'] === 'landing') ? 'landing'
     <title>CloudPost v2.4 - Collaborative API Platform & Studio</title>
     <link rel="canonical" href="<?php echo defined('APP_URL') ? APP_URL : 'https://cloudpost.techvisionstudio.in'; ?>">
     <meta property="og:url" content="<?php echo defined('APP_URL') ? APP_URL : 'https://cloudpost.techvisionstudio.in'; ?>">
+    <meta name="author" content="Tech Vision Studio">
+    <meta name="publisher" content="Tech Vision Studio">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f97316">
     <meta name="mobile-web-app-capable" content="yes">
@@ -465,6 +469,21 @@ $initialView = (isset($_GET['view']) && $_GET['view'] === 'landing') ? 'landing'
                     <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-purple-400" v-html="renderIcon('trending-up', 'w-3.5 h-3.5 text-purple-400')"></span>
                     <span class="hidden xl:inline whitespace-nowrap">Financials</span>
                 </button>
+
+                <!-- Guest Mode Pill (Click asks confirmation before changing) -->
+                <?php if (!$user): ?>
+                    <button type="button" @click="requestGuestResetConfirmation()" id="php-nav-guest-mode-pill" 
+                        class="h-8 inline-flex items-center gap-1.5 px-2.5 sm:px-3 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs shrink-0 whitespace-nowrap cursor-pointer transition-colors" 
+                        title="Guest Mode: Click to change or manage guest session">
+                        <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-amber-400" v-html="renderIcon('zap', 'w-3.5 h-3.5 text-amber-400')"></span>
+                        <span class="text-[11px] font-medium whitespace-nowrap">Guest Mode</span>
+                    </button>
+                <?php else: ?>
+                    <div class="h-8 inline-flex items-center gap-1.5 px-2.5 sm:px-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs shrink-0 whitespace-nowrap">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                        <span class="text-[11px] font-medium whitespace-nowrap">Synced</span>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <!-- Right: Environment Selector, DB Sync & Auth (Always Anchored with ml-auto) -->
@@ -956,13 +975,40 @@ $initialView = (isset($_GET['view']) && $_GET['view'] === 'landing') ? 'landing'
 
                         <!-- Tools Dropdown (Accessible on all screen sizes!) -->
                         <div class="relative">
-                            <button type="button" @click="showToolsDropdown = !showToolsDropdown" class="px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 text-zinc-400 hover:text-white hover:bg-white/5 border border-white/10 transition-colors" title="Platform & Suite Tools">
-                                <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-orange-400" v-html="renderIcon('wrench', 'w-3.5 h-3.5 text-orange-400')"></span>
-                                <span class="text-[11px] hidden md:inline">Tools</span>
-                                <span class="inline-flex items-center justify-center shrink-0 w-3 h-3 text-zinc-500" v-html="renderIcon('chevron-down', 'w-3 h-3 text-zinc-500')"></span>
+                            <button type="button" @click="showToolsDropdown = !showToolsDropdown" id="php-tools-btn" class="px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 text-orange-300 hover:text-white bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 transition-colors cursor-pointer" title="Platform & Studio Tools">
+                                <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-orange-400" v-html="renderIcon('sparkles', 'w-3.5 h-3.5 text-orange-400')"></span>
+                                <span class="text-[11px] whitespace-nowrap font-semibold">Tools</span>
+                                <span class="inline-flex items-center justify-center shrink-0 w-3 h-3 text-orange-400/80" v-html="renderIcon('chevron-down', 'w-3 h-3 text-orange-400/80')"></span>
                             </button>
-                            <div v-if="showToolsDropdown" @click.outside="showToolsDropdown = false" class="absolute right-0 mt-1 w-52 bg-[#151926] border border-white/10 rounded-xl shadow-2xl z-50 p-1.5 space-y-1">
-                                <div class="px-2.5 py-1 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Suite Tools</div>
+                            <div v-if="showToolsDropdown" @click.outside="showToolsDropdown = false" class="absolute right-0 mt-1 w-60 max-h-[80vh] overflow-y-auto bg-[#151926] border border-white/10 rounded-xl shadow-2xl z-50 p-2 space-y-1">
+                                <div class="px-2 py-1 text-[10px] font-bold text-orange-400/90 uppercase tracking-wider flex items-center justify-between border-b border-white/5 pb-1 mb-1">
+                                    <span>Tools & Protocols</span>
+                                    <span class="text-[9px] font-mono text-zinc-400">Suite</span>
+                                </div>
+
+                                <!-- Register & Restore Quick Actions -->
+                                <button type="button" @click="openRegisterTab(); showToolsDropdown = false" id="php-tools-register-btn" class="w-full flex items-center justify-between p-2 rounded-lg bg-gradient-to-r from-amber-500/15 to-orange-500/15 hover:from-amber-500/25 hover:to-orange-500/25 text-amber-200 hover:text-white border border-amber-500/30 text-xs font-semibold transition-colors">
+                                    <div class="flex items-center gap-2">
+                                        <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-amber-400" v-html="renderIcon('user-plus', 'w-3.5 h-3.5 text-amber-400')"></span>
+                                        <span>Register Account</span>
+                                    </div>
+                                    <span class="text-[9px] font-mono bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded border border-amber-500/30">Free</span>
+                                </button>
+
+                                <button type="button" @click="openModal('importExportModal'); showToolsDropdown = false" id="php-tools-restore-btn" class="w-full flex items-center justify-between p-2 rounded-lg text-emerald-300 hover:text-white hover:bg-emerald-500/10 text-xs font-semibold transition-colors">
+                                    <div class="flex items-center gap-2">
+                                        <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-emerald-400" v-html="renderIcon('rotate-ccw', 'w-3.5 h-3.5 text-emerald-400')"></span>
+                                        <span>Restore / Import Data</span>
+                                    </div>
+                                    <span class="text-[9px] font-mono text-zinc-400">JSON/Zip</span>
+                                </button>
+
+                                <button type="button" @click="requestGuestResetConfirmation(); showToolsDropdown = false" id="php-tools-guest-btn" class="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-amber-300 hover:bg-amber-500/10 text-xs transition-colors">
+                                    <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-amber-400" v-html="renderIcon('shield-alert', 'w-3.5 h-3.5 text-amber-400')"></span>
+                                    <span>Change Guest User...</span>
+                                </button>
+
+                                <div class="pt-1 border-t border-white/5 my-1"></div>
                                 <button v-if="isSaaSAdmin" type="button" @click="openArchitectureTab(); showToolsDropdown = false" class="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 text-xs text-zinc-300 hover:text-white transition-colors">
                                     <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-orange-400" v-html="renderIcon('layers', 'w-3.5 h-3.5')"></span>
                                     <span>Architecture & DB</span>
