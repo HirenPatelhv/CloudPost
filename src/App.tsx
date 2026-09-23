@@ -1098,10 +1098,6 @@ export default function App() {
   };
 
   const handleOpenDocsTab = () => {
-    if (!isSaaSUser) {
-      setShowAuthModal(true);
-      return;
-    }
     setShowLandingPage(false);
     const existing = tabs.find(t => t.type === 'collection_docs');
     if (existing) {

@@ -481,8 +481,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* 10. Download Desktop App / Releases Button (Only when not in desktop tool) */}
-      {!isDesktopTool() && onOpenDownloadModal && (
+      {/* 10. Download Desktop App & Distributions Button (Unified across Desktop & Web) */}
+      {onOpenDownloadModal && (
         <button
           onClick={onOpenDownloadModal}
           id="nav-download-desktop-btn"

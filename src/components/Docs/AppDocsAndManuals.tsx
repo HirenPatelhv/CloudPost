@@ -66,16 +66,6 @@ export const AppDocsAndManuals: React.FC<AppDocsAndManualsProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
 
-  if (isSaaSUser === false) {
-    return (
-      <SaaSExclusivityGate
-        featureName="Platform Documentation & User Manuals"
-        onOpenRegister={plan => onOpenRegister?.(plan)}
-        onOpenLogin={() => onOpenAuthModal?.()}
-      />
-    );
-  }
-
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
     setCopiedSnippet(id);

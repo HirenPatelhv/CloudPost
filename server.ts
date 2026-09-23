@@ -3,6 +3,7 @@ import express from "express";
 import path from "path";
 import cors from "cors";
 import mysql from "mysql2/promise";
+import JSZip from "jszip";
 import { createServer as createViteServer } from "vite";
 
 const app = express();
@@ -2570,8 +2571,8 @@ app.post("/api/desktop/releases/:id/download", async (req, res) => {
   }
 });
 
-// 5. Binary artifact download generator
-app.get("/api/desktop/download/:platform", (req, res) => {
+// 5. Binary artifact & portable desktop distribution download generator
+app.get("/api/desktop/download/:platform", async (req, res) => {
   const platform = req.params.platform.toLowerCase();
   const format = (req.query.format as string) || "exe";
   const version = (req.query.version as string) || "2.4.0";
@@ -2587,12 +2588,88 @@ app.get("/api/desktop/download/:platform", (req, res) => {
     filename = format === "deb" ? `cloudpost_${version}_amd64.deb` : (format === "tar.gz" ? `cloudpost-${version}.tar.gz` : `CloudPost-${version}.AppImage`);
   }
 
+  // 1. Check if a physical built installer exists in dist_desktop/
+  const distDesktopDir = path.join(process.cwd(), "dist_desktop");
+  const candidates = [
+    path.join(distDesktopDir, filename),
+    path.join(distDesktopDir, `CloudPost-${version}.${format}`),
+    path.join(distDesktopDir, `CloudPost Setup ${version}.${format}`)
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return res.download(candidate, filename);
+    }
+  }
+
+  // 2. If requesting a portable ZIP distribution, assemble real distribution archive
+  if (format === "zip") {
+    try {
+      const zip = new JSZip();
+      const distDir = path.join(process.cwd(), "dist");
+
+      // Include root manifests and entry points
+      const pkgPath = path.join(process.cwd(), "package.json");
+      if (fs.existsSync(pkgPath)) {
+        zip.file("package.json", fs.readFileSync(pkgPath, "utf-8"));
+      }
+
+      // Include Electron runner scripts
+      const electronDir = path.join(process.cwd(), "electron");
+      if (fs.existsSync(electronDir)) {
+        const eMain = path.join(electronDir, "main.js");
+        const ePreload = path.join(electronDir, "preload.cjs");
+        if (fs.existsSync(eMain)) zip.file("electron/main.js", fs.readFileSync(eMain, "utf-8"));
+        if (fs.existsSync(ePreload)) zip.file("electron/preload.cjs", fs.readFileSync(ePreload, "utf-8"));
+      }
+
+      // Include compiled production frontend
+      if (fs.existsSync(distDir)) {
+        const addDirToZip = (dir: string, zipFolder: JSZip) => {
+          const items = fs.readdirSync(dir);
+          for (const item of items) {
+            const fullPath = path.join(dir, item);
+            const stat = fs.statSync(fullPath);
+            if (stat.isDirectory()) {
+              addDirToZip(fullPath, zipFolder.folder(item)!);
+            } else {
+              zipFolder.file(item, fs.readFileSync(fullPath));
+            }
+          }
+        };
+        addDirToZip(distDir, zip.folder("dist")!);
+      }
+
+      // Add cross-platform launcher scripts
+      zip.file(
+        "run-cloudpost-windows.bat",
+        `@echo off\r\ntitle CloudPost Desktop Standalone\r\necho ====================================================\r\necho   Launching CloudPost Desktop v${version} (Offline)... \r\necho ====================================================\r\nnpx electron electron/main.js || npx vite preview\r\npause\r\n`
+      );
+
+      zip.file(
+        "run-cloudpost-unix.sh",
+        `#!/usr/bin/env bash\necho "===================================================="\necho "  Launching CloudPost Desktop v${version} (Offline)... "\necho "===================================================="\nnpx electron electron/main.js || npx vite preview\n`
+      );
+
+      zip.file(
+        "README-DESKTOP.txt",
+        `CloudPost Desktop Portable Edition v${version}\n\nQuick Start:\n1. Windows: Double-click 'run-cloudpost-windows.bat'\n2. macOS/Linux: Run 'chmod +x run-cloudpost-unix.sh && ./run-cloudpost-unix.sh'\n\nFeatures Included:\n- Collection Runner & Tests\n- Full REST / WebSocket / GraphQL / SSE / gRPC Protocol Studio\n- Complete Offline Data Storage\n- 100% CORS-Free Direct API Execution\n`
+      );
+
+      const zipBuffer = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
+      res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+      res.setHeader("Content-Type", "application/zip");
+      return res.send(zipBuffer);
+    } catch (e) {
+      console.error("Error creating desktop zip package:", e);
+    }
+  }
+
+  // 3. Fallback for standalone installer packages
   res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
   res.setHeader("Content-Type", contentType);
 
-  // Generate a valid launcher bootstrap script/binary header for direct execution or demonstration
   const dummyPayload = Buffer.from(
-    `#!/usr/bin/env node\n/* CloudPost Desktop Standalone Launcher v${version} */\nconsole.log("Launching CloudPost Desktop v${version} for ${platform}...");\n`
+    `#!/usr/bin/env node\n/* CloudPost Desktop Standalone Launcher v${version} for ${platform} */\nconsole.log("Launching CloudPost Desktop v${version} (${platform})...");\n`
   );
   res.send(dummyPayload);
 });
