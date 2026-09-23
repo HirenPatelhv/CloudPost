@@ -187,364 +187,374 @@ export const Navbar: React.FC<NavbarProps> = ({
   const activeEnv = environments.find(e => e.id === activeEnvId && !e.isGlobal);
 
   return (
-    <header className="relative z-50 min-h-[56px] py-1.5 bg-[#121520] border-b border-white/10 px-2 sm:px-3 flex items-center select-none shrink-0 font-sans gap-1.5 sm:gap-2">
-      {/* 1. Sidebar Toggle Button */}
-      {onToggleSidebar && (
-        <button
-          onClick={onToggleSidebar}
-          className="h-8 w-8 inline-flex items-center justify-center p-0 text-zinc-400 hover:text-white rounded-lg hover:bg-white/5 border border-white/10 transition-colors shrink-0 whitespace-nowrap"
-          title={isSidebarOpen ? "Hide Sidebar (Ctrl+\\)" : "Show Sidebar (Ctrl+\\)"}
-        >
-          {isSidebarOpen ? (
-            <PanelLeftClose className="w-4 h-4 text-orange-400" />
-          ) : (
-            <PanelLeft className="w-4 h-4 text-zinc-300" />
-          )}
-        </button>
-      )}
-
-      {/* 2. Brand Logo - Click to return to Home page */}
-      <button
-        onClick={onOpenLandingPage}
-        className="h-8 inline-flex items-center gap-1.5 hover:opacity-80 transition-opacity text-left group shrink-0 whitespace-nowrap"
-        title="Home"
-      >
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-orange-500 to-amber-600 flex items-center justify-center shadow-md shadow-orange-500/20 text-white font-black text-sm shrink-0">
-          <Send className="w-4 h-4 text-white -rotate-12" />
-        </div>
-        <div className="hidden md:flex flex-col justify-center">
-          <div className="flex items-center gap-1 leading-none">
-            <span className="font-bold text-white text-xs sm:text-sm tracking-tight group-hover:text-orange-300 transition-colors">CloudPost</span>
-            <span className="text-[9px] px-1 py-0.2 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 font-mono font-semibold">{APP_VERSION_DISPLAY}</span>
-          </div>
-          <span className="text-[7.5px] text-orange-400/80 font-mono block leading-tight mt-0.5">COLLABORATIVE API</span>
-        </div>
-      </button>
-
-      {/* 3. Workspace Dropdown Switcher */}
-      <div className="relative shrink-0" ref={workspaceRef}>
-        <button
-          onClick={() => setShowWorkspaceDropdown(!showWorkspaceDropdown)}
-          className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 bg-[#181d2c] hover:bg-[#1f2537] border border-white/10 rounded-lg text-xs text-white transition-colors shrink-0 whitespace-nowrap"
-        >
-          {currentWorkspace.type === 'TEAM' ? (
-            <Users className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-          ) : (
-            <UserIcon className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-          )}
-          <span className="font-semibold max-w-[80px] sm:max-w-[110px] xl:max-w-[130px] truncate whitespace-nowrap">{currentWorkspace.name}</span>
-          <ChevronDown className="w-3 h-3 text-zinc-400 shrink-0" />
-        </button>
-
-        {showWorkspaceDropdown && (
-          <div className="absolute left-0 top-full mt-1.5 w-64 bg-[#141824] border border-white/10 rounded-xl shadow-2xl z-50 p-2 space-y-1 text-xs">
-            <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
-              Workspaces ({allWorkspaces.length})
-            </div>
-            <div className="max-h-60 overflow-y-auto space-y-1">
-              {allWorkspaces.map(ws => (
-                <div
-                  key={ws.id}
-                  onClick={() => {
-                    onSelectWorkspace(ws.id);
-                    setShowWorkspaceDropdown(false);
-                  }}
-                  className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${
-                    ws.id === currentWorkspace.id
-                      ? 'bg-orange-500/20 text-white font-semibold'
-                      : 'text-zinc-300 hover:bg-white/5 hover:text-white'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 truncate">
-                    {ws.type === 'TEAM' ? (
-                      <Users className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-                    ) : (
-                      <UserIcon className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                    )}
-                    <span className="truncate">{ws.name}</span>
-                  </div>
-                  <span className="text-[10px] text-zinc-500 font-mono">
-                    {ws.members.length} members
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div className="pt-2 border-t border-white/5">
-              <button
-                onClick={() => {
-                  setShowWorkspaceDropdown(false);
-                  onOpenCreateWorkspaceModal();
-                }}
-                className="w-full flex items-center gap-2 p-2 rounded-lg text-orange-400 hover:text-orange-300 hover:bg-white/5 transition-colors font-medium text-xs"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Create Workspace...</span>
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* 3.1 Collection Runner Button (Matching PHP & Direct Access) */}
-      {onOpenRunner && (
-        <button
-          onClick={onOpenRunner}
-          id="nav-runner-btn"
-          className="h-8 inline-flex items-center gap-1.5 px-2.5 sm:px-3 rounded-lg bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-xs font-semibold text-orange-300 transition-colors shrink-0 whitespace-nowrap cursor-pointer shadow-sm"
-          title="Collection Runner & Automated API Tests"
-        >
-          <Play className="w-3.5 h-3.5 text-orange-400 fill-orange-400 shrink-0" />
-          <span className="whitespace-nowrap hidden sm:inline">Runner</span>
-        </button>
-      )}
-
-      {/* 4. Guest Mode Pill */}
-      {isGuest ? (
-        <div className="h-8 items-center gap-1.5 px-2.5 sm:px-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs shrink-0 whitespace-nowrap hidden md:inline-flex" title="Guest Mode">
-          <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-          <span className="text-[11px] font-medium whitespace-nowrap">Guest Mode</span>
-        </div>
-      ) : (
-        <div className="h-8 items-center gap-1.5 px-2.5 sm:px-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs shrink-0 whitespace-nowrap hidden md:inline-flex">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-          <span className="text-[11px] font-medium whitespace-nowrap">Synced</span>
-        </div>
-      )}
-
-      {/* 5. Network & Offline Sync State Widget */}
-      <div className="h-8 inline-flex items-center justify-between gap-1.5 bg-[#181d2c] border border-white/10 rounded-lg px-2 text-xs shrink-0 whitespace-nowrap min-w-[130px]">
-        {syncState.isOnline ? (
-          <div 
-            className="h-full inline-flex items-center gap-1.5 px-0.5 text-emerald-400 font-mono text-[11px] cursor-pointer hover:bg-white/5 rounded transition-colors shrink-0 whitespace-nowrap flex-1"
-            onClick={handleManualSync}
-            title={`Network: Online. ${syncState.pendingCount > 0 ? `${syncState.pendingCount} changes waiting to sync.` : 'All changes synced to MySQL database.'} Click to sync now.`}
-          >
-            <span className="w-3.5 h-3.5 flex items-center justify-center shrink-0">
-              {syncState.status === 'syncing' || isManualSyncing ? (
-                <RefreshCw className="w-3.5 h-3.5 text-amber-400 animate-spin shrink-0" />
-              ) : (
-                <Wifi className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-              )}
-            </span>
-            <span className={`whitespace-nowrap ${syncState.status === 'syncing' || isManualSyncing ? 'text-amber-300 font-semibold' : 'text-emerald-300'}`}>
-              {syncState.status === 'syncing' || isManualSyncing
-                ? 'Syncing...'
-                : syncState.pendingCount > 0
-                ? `Sync (${syncState.pendingCount})`
-                : 'Sync'}
-            </span>
-          </div>
-        ) : (
-          <div 
-            className="h-full inline-flex items-center justify-center gap-1.5 px-1 text-amber-400 font-mono text-[11px] bg-amber-500/10 rounded shrink-0 whitespace-nowrap flex-1"
-            title="You are currently offline. All workspaces, collections, environments, and tests work completely offline and will auto-sync when internet reconnects."
-          >
-            <WifiOff className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span className="text-amber-300 font-semibold whitespace-nowrap">
-              Offline {syncState.pendingCount > 0 ? `(${syncState.pendingCount})` : ''}
-            </span>
-          </div>
-        )}
-
-        {/* Manual Sync Trigger Button */}
-        {syncState.isOnline && (
+    <header className="relative z-50 min-h-[56px] py-1.5 bg-[#121520] border-b border-white/10 px-2 sm:px-3 flex items-center justify-between select-none shrink-0 font-sans gap-2 w-full">
+      {/* 1. LEFT SECTION (Fixed & Anchored on Left): Toggle, Logo, Workspace Switcher, Collection Runner */}
+      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        {/* 1.1 Sidebar Toggle Button */}
+        {onToggleSidebar && (
           <button
-            onClick={handleManualSync}
-            disabled={syncState.status === 'syncing' || isManualSyncing}
-            className="h-6 w-6 inline-flex items-center justify-center p-0 text-zinc-400 hover:text-white hover:bg-white/10 rounded transition-colors disabled:opacity-50 shrink-0 ml-auto"
-            title="Force Sync All Local Data to Remote MySQL Database"
+            onClick={onToggleSidebar}
+            className="h-8 w-8 inline-flex items-center justify-center p-0 text-zinc-400 hover:text-white rounded-lg hover:bg-white/5 border border-white/10 transition-colors shrink-0 whitespace-nowrap"
+            title={isSidebarOpen ? "Hide Sidebar (Ctrl+\\)" : "Show Sidebar (Ctrl+\\)"}
           >
-            <RefreshCw className={`w-3 h-3 ${syncState.status === 'syncing' || isManualSyncing ? 'animate-spin text-amber-400' : ''}`} />
+            {isSidebarOpen ? (
+              <PanelLeftClose className="w-4 h-4 text-orange-400" />
+            ) : (
+              <PanelLeft className="w-4 h-4 text-zinc-300" />
+            )}
+          </button>
+        )}
+
+        {/* 1.2 Brand Logo - Click to return to Home page */}
+        <button
+          onClick={onOpenLandingPage}
+          className="h-8 inline-flex items-center gap-1.5 hover:opacity-80 transition-opacity text-left group shrink-0 whitespace-nowrap"
+          title="Home"
+        >
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-orange-500 to-amber-600 flex items-center justify-center shadow-md shadow-orange-500/20 text-white font-black text-sm shrink-0">
+            <Send className="w-4 h-4 text-white -rotate-12" />
+          </div>
+          <div className="hidden md:flex flex-col justify-center">
+            <div className="flex items-center gap-1 leading-none">
+              <span className="font-bold text-white text-xs sm:text-sm tracking-tight group-hover:text-orange-300 transition-colors">CloudPost</span>
+              <span className="text-[9px] px-1 py-0.2 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 font-mono font-semibold">{APP_VERSION_DISPLAY}</span>
+            </div>
+            <span className="text-[7.5px] text-orange-400/80 font-mono block leading-tight mt-0.5">COLLABORATIVE API</span>
+          </div>
+        </button>
+
+        {/* 1.3 Workspace Dropdown Switcher */}
+        <div className="relative shrink-0" ref={workspaceRef}>
+          <button
+            onClick={() => setShowWorkspaceDropdown(!showWorkspaceDropdown)}
+            className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 bg-[#181d2c] hover:bg-[#1f2537] border border-white/10 rounded-lg text-xs text-white transition-colors shrink-0 whitespace-nowrap"
+          >
+            {currentWorkspace.type === 'TEAM' ? (
+              <Users className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+            ) : (
+              <UserIcon className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+            )}
+            <span className="font-semibold max-w-[80px] sm:max-w-[110px] xl:max-w-[130px] truncate whitespace-nowrap">{currentWorkspace.name}</span>
+            <ChevronDown className="w-3 h-3 text-zinc-400 shrink-0" />
+          </button>
+
+          {showWorkspaceDropdown && (
+            <div className="absolute left-0 top-full mt-1.5 w-64 bg-[#141824] border border-white/10 rounded-xl shadow-2xl z-50 p-2 space-y-1 text-xs">
+              <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+                Workspaces ({allWorkspaces.length})
+              </div>
+              <div className="max-h-60 overflow-y-auto space-y-1">
+                {allWorkspaces.map(ws => (
+                  <div
+                    key={ws.id}
+                    onClick={() => {
+                      onSelectWorkspace(ws.id);
+                      setShowWorkspaceDropdown(false);
+                    }}
+                    className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${
+                      ws.id === currentWorkspace.id
+                        ? 'bg-orange-500/20 text-white font-semibold'
+                        : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      {ws.type === 'TEAM' ? (
+                        <Users className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+                      ) : (
+                        <UserIcon className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                      )}
+                      <span className="truncate">{ws.name}</span>
+                    </div>
+                    <span className="text-[10px] text-zinc-500 font-mono">
+                      {ws.members.length} members
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-2 border-t border-white/5">
+                <button
+                  onClick={() => {
+                    setShowWorkspaceDropdown(false);
+                    onOpenCreateWorkspaceModal();
+                  }}
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-orange-400 hover:text-orange-300 hover:bg-white/5 transition-colors font-medium text-xs"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Create Workspace...</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* 1.4 Collection Runner Button (Matching PHP & Direct Access) */}
+        {onOpenRunner && (
+          <button
+            onClick={onOpenRunner}
+            id="nav-runner-btn"
+            className="h-8 inline-flex items-center gap-1.5 px-2.5 sm:px-3 rounded-lg bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 text-xs font-semibold text-orange-300 transition-colors shrink-0 whitespace-nowrap cursor-pointer shadow-sm"
+            title="Collection Runner & Automated API Tests"
+          >
+            <Play className="w-3.5 h-3.5 text-orange-400 fill-orange-400 shrink-0" />
+            <span className="whitespace-nowrap hidden sm:inline">Runner</span>
           </button>
         )}
       </div>
 
-      {/* 6. Import Button */}
-      <button
-        onClick={onImportCollection}
-        className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 text-xs text-zinc-300 hover:text-white rounded-lg hover:bg-white/10 bg-white/5 border border-white/10 transition-colors shrink-0 whitespace-nowrap"
-        title="Import Postman Collection, Environment or CloudPost JSON (Ctrl+I)"
-      >
-        <Upload className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-        <span className="font-medium whitespace-nowrap hidden sm:inline">Import</span>
-      </button>
+      {/* 2. MIDDLE SCROLLABLE SECTION (Flexes & scrolls smoothly without pushing right controls off screen) */}
+      <div className="flex-1 flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar min-w-0 px-1 py-0.5">
+        {/* 2.1 Guest Mode Pill */}
+        {isGuest ? (
+          <div 
+            onClick={onResetGuestSession}
+            className="h-8 items-center gap-1.5 px-2.5 sm:px-3 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs shrink-0 whitespace-nowrap inline-flex cursor-pointer transition-colors" 
+            title="Guest Mode: Click to manage or change guest session"
+          >
+            <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span className="text-[11px] font-medium whitespace-nowrap">Guest Mode</span>
+          </div>
+        ) : (
+          <div className="h-8 items-center gap-1.5 px-2.5 sm:px-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs shrink-0 whitespace-nowrap inline-flex">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+            <span className="text-[11px] font-medium whitespace-nowrap">Synced</span>
+          </div>
+        )}
 
-      {/* 7. Export Button */}
-      <button
-        onClick={onExportAllCollections}
-        className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 text-xs text-zinc-300 hover:text-white rounded-lg hover:bg-white/10 bg-white/5 border border-white/10 transition-colors shrink-0 whitespace-nowrap"
-        title="Export Postman v2.1, Environments, or Full Backup (Ctrl+E)"
-      >
-        <Download className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-        <span className="font-medium whitespace-nowrap hidden sm:inline">Export</span>
-      </button>
+        {/* 2.2 Network & Offline Sync State Widget */}
+        <div className="h-8 inline-flex items-center justify-between gap-1.5 bg-[#181d2c] border border-white/10 rounded-lg px-2 text-xs shrink-0 whitespace-nowrap min-w-[130px]">
+          {syncState.isOnline ? (
+            <div 
+              className="h-full inline-flex items-center gap-1.5 px-0.5 text-emerald-400 font-mono text-[11px] cursor-pointer hover:bg-white/5 rounded transition-colors shrink-0 whitespace-nowrap flex-1"
+              onClick={handleManualSync}
+              title={`Network: Online. ${syncState.pendingCount > 0 ? `${syncState.pendingCount} changes waiting to sync.` : 'All changes synced to MySQL database.'} Click to sync now.`}
+            >
+              <span className="w-3.5 h-3.5 flex items-center justify-center shrink-0">
+                {syncState.status === 'syncing' || isManualSyncing ? (
+                  <RefreshCw className="w-3.5 h-3.5 text-amber-400 animate-spin shrink-0" />
+                ) : (
+                  <Wifi className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                )}
+              </span>
+              <span className={`whitespace-nowrap ${syncState.status === 'syncing' || isManualSyncing ? 'text-amber-300 font-semibold' : 'text-emerald-300'}`}>
+                {syncState.status === 'syncing' || isManualSyncing
+                  ? 'Syncing...'
+                  : syncState.pendingCount > 0
+                  ? `Sync (${syncState.pendingCount})`
+                  : 'Sync'}
+              </span>
+            </div>
+          ) : (
+            <div 
+              className="h-full inline-flex items-center justify-center gap-1.5 px-1 text-amber-400 font-mono text-[11px] bg-amber-500/10 rounded shrink-0 whitespace-nowrap flex-1"
+              title="You are currently offline. All workspaces, collections, environments, and tests work completely offline and will auto-sync when internet reconnects."
+            >
+              <WifiOff className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <span className="text-amber-300 font-semibold whitespace-nowrap">
+                Offline {syncState.pendingCount > 0 ? `(${syncState.pendingCount})` : ''}
+              </span>
+            </div>
+          )}
 
-      {/* 8. + Var Button */}
-      <button
-        onClick={onOpenCreateVariableModal}
-        className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 bg-[#181d2c] hover:bg-[#1f2537] border border-white/10 text-orange-300 hover:text-orange-200 rounded-lg text-xs font-medium transition-colors shrink-0 whitespace-nowrap"
-        title="Create a new variable (Environment, Collection, or Global)"
-      >
-        <Key className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-        <span className="whitespace-nowrap font-semibold">+ Var</span>
-      </button>
+          {/* Manual Sync Trigger Button */}
+          {syncState.isOnline && (
+            <button
+              onClick={handleManualSync}
+              disabled={syncState.status === 'syncing' || isManualSyncing}
+              className="h-6 w-6 inline-flex items-center justify-center p-0 text-zinc-400 hover:text-white hover:bg-white/10 rounded transition-colors disabled:opacity-50 shrink-0 ml-auto"
+              title="Force Sync All Local Data to Remote MySQL Database"
+            >
+              <RefreshCw className={`w-3 h-3 ${syncState.status === 'syncing' || isManualSyncing ? 'animate-spin text-amber-400' : ''}`} />
+            </button>
+          )}
+        </div>
 
-      {/* 9. Environment Selector with Quick Peek */}
-      <div className="relative h-8 inline-flex items-center gap-1 bg-[#181d2c] border border-white/10 rounded-lg px-1 text-xs shrink-0 whitespace-nowrap" ref={envRef}>
+        {/* 2.3 Import Button */}
         <button
-          onClick={() => setShowEnvDropdown(!showEnvDropdown)}
-          className="h-full inline-flex items-center gap-1.5 px-1.5 sm:px-2 text-white hover:text-orange-300 transition-colors shrink-0 whitespace-nowrap"
+          onClick={onImportCollection}
+          className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 text-xs text-zinc-300 hover:text-white rounded-lg hover:bg-white/10 bg-white/5 border border-white/10 transition-colors shrink-0 whitespace-nowrap"
+          title="Import Postman Collection, Environment or CloudPost JSON (Ctrl+I)"
         >
-          <Globe className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-          <span className="font-medium max-w-[75px] sm:max-w-[105px] xl:max-w-[120px] truncate whitespace-nowrap">
-            {activeEnv ? activeEnv.name : 'No Environment'}
-          </span>
-          <ChevronDown className="w-3 h-3 text-zinc-400 shrink-0" />
+          <Upload className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+          <span className="font-medium whitespace-nowrap hidden sm:inline">Import</span>
         </button>
 
-        {showEnvDropdown && (
-          <div className="absolute right-0 top-full mt-1.5 w-60 bg-[#141824] border border-white/10 rounded-xl shadow-2xl z-50 p-2 space-y-1 text-xs">
-            <div className="px-2 py-1 text-[11px] font-semibold uppercase text-zinc-500">
-              Environments
-            </div>
-            <div
-              onClick={() => {
-                onSetActiveEnv('no_env');
-                setShowEnvDropdown(false);
-              }}
-              className={`p-2 rounded-lg cursor-pointer ${
-                activeEnvId === 'no_env' || !activeEnvId
-                  ? 'bg-orange-500/20 text-white font-semibold'
-                  : 'text-zinc-300 hover:bg-white/5'
-              }`}
-            >
-              No Environment (Globals only)
-            </div>
-            {environments.filter(e => !e.isGlobal).map(env => (
+        {/* 2.4 Export Button */}
+        <button
+          onClick={onExportAllCollections}
+          className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 text-xs text-zinc-300 hover:text-white rounded-lg hover:bg-white/10 bg-white/5 border border-white/10 transition-colors shrink-0 whitespace-nowrap"
+          title="Export Postman v2.1, Environments, or Full Backup (Ctrl+E)"
+        >
+          <Download className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+          <span className="font-medium whitespace-nowrap hidden sm:inline">Export</span>
+        </button>
+
+        {/* 2.5 + Var Button */}
+        <button
+          onClick={onOpenCreateVariableModal}
+          className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 bg-[#181d2c] hover:bg-[#1f2537] border border-white/10 text-orange-300 hover:text-orange-200 rounded-lg text-xs font-medium transition-colors shrink-0 whitespace-nowrap"
+          title="Create a new variable (Environment, Collection, or Global)"
+        >
+          <Key className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+          <span className="whitespace-nowrap font-semibold">+ Var</span>
+        </button>
+
+        {/* 2.6 Environment Selector with Quick Peek */}
+        <div className="relative h-8 inline-flex items-center gap-1 bg-[#181d2c] border border-white/10 rounded-lg px-1 text-xs shrink-0 whitespace-nowrap" ref={envRef}>
+          <button
+            onClick={() => setShowEnvDropdown(!showEnvDropdown)}
+            className="h-full inline-flex items-center gap-1.5 px-1.5 sm:px-2 text-white hover:text-orange-300 transition-colors shrink-0 whitespace-nowrap"
+          >
+            <Globe className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+            <span className="font-medium max-w-[75px] sm:max-w-[105px] xl:max-w-[120px] truncate whitespace-nowrap">
+              {activeEnv ? activeEnv.name : 'No Environment'}
+            </span>
+            <ChevronDown className="w-3 h-3 text-zinc-400 shrink-0" />
+          </button>
+
+          {showEnvDropdown && (
+            <div className="absolute right-0 top-full mt-1.5 w-60 bg-[#141824] border border-white/10 rounded-xl shadow-2xl z-50 p-2 space-y-1 text-xs">
+              <div className="px-2 py-1 text-[11px] font-semibold uppercase text-zinc-500">
+                Environments
+              </div>
               <div
-                key={env.id}
                 onClick={() => {
-                  onSetActiveEnv(env.id);
+                  onSetActiveEnv('no_env');
                   setShowEnvDropdown(false);
                 }}
-                className={`p-2 rounded-lg cursor-pointer flex items-center justify-between ${
-                  activeEnvId === env.id
+                className={`p-2 rounded-lg cursor-pointer ${
+                  activeEnvId === 'no_env' || !activeEnvId
                     ? 'bg-orange-500/20 text-white font-semibold'
                     : 'text-zinc-300 hover:bg-white/5'
                 }`}
               >
-                <span className="truncate">{env.name}</span>
-                <span className="text-[10px] text-zinc-500">{env.variables.length} vars</span>
+                No Environment (Globals only)
               </div>
-            ))}
-            <div className="pt-2 border-t border-white/5">
-              <button
-                onClick={() => {
-                  setShowEnvDropdown(false);
+              {environments.filter(e => !e.isGlobal).map(env => (
+                <div
+                  key={env.id}
+                  onClick={() => {
+                    onSetActiveEnv(env.id);
+                    setShowEnvDropdown(false);
+                  }}
+                  className={`p-2 rounded-lg cursor-pointer flex items-center justify-between ${
+                    activeEnvId === env.id
+                      ? 'bg-orange-500/20 text-white font-semibold'
+                      : 'text-zinc-300 hover:bg-white/5'
+                  }`}
+                >
+                  <span className="truncate">{env.name}</span>
+                  <span className="text-[10px] text-zinc-500">{env.variables.length} vars</span>
+                </div>
+              ))}
+              <div className="pt-2 border-t border-white/5">
+                <button
+                  onClick={() => {
+                    setShowEnvDropdown(false);
+                    onOpenEnvManager();
+                  }}
+                  className="w-full text-left p-1.5 text-orange-400 hover:text-orange-300 hover:bg-white/5 rounded text-xs font-medium"
+                >
+                  Manage Environments...
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Quick peek eye icon */}
+          <div className="relative shrink-0">
+            <button
+              onClick={() => setShowQuickVars(!showQuickVars)}
+              className={`h-6 w-6 inline-flex items-center justify-center p-0 rounded transition-colors shrink-0 ${
+                showQuickVars ? 'bg-orange-500/20 text-orange-400' : 'hover:bg-white/10 text-zinc-400 hover:text-white'
+              }`}
+              title="Quick View & Add Variables"
+            >
+              <Eye className="w-3.5 h-3.5" />
+            </button>
+            {showQuickVars && (
+              <QuickVariablePopover
+                variables={scopedVariables}
+                environments={environments}
+                activeEnvId={activeEnvId}
+                currentCollection={currentCollection}
+                onOpenManager={() => {
+                  setShowQuickVars(false);
                   onOpenEnvManager();
                 }}
-                className="w-full text-left p-1.5 text-orange-400 hover:text-orange-300 hover:bg-white/5 rounded text-xs font-medium"
-              >
-                Manage Environments...
-              </button>
-            </div>
+                onQuickAddVariable={onQuickAddVariable}
+                onQuickUpdateVariable={onQuickUpdateVariable}
+                onClose={() => setShowQuickVars(false)}
+              />
+            )}
           </div>
+        </div>
+
+        {/* 2.7 Download Desktop App & Distributions Button */}
+        {onOpenDownloadModal && (
+          <button
+            onClick={onOpenDownloadModal}
+            id="nav-download-desktop-btn"
+            className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 bg-gradient-to-r from-orange-500/15 to-amber-500/15 hover:from-orange-500/25 hover:to-amber-500/25 border border-orange-500/35 text-orange-300 hover:text-white rounded-lg text-xs font-semibold transition-all shadow-sm cursor-pointer shrink-0 whitespace-nowrap"
+            title="Download CloudPost Desktop App & Distributions (Windows, macOS, Linux, PHP)"
+          >
+            <Download className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+            <span className="whitespace-nowrap hidden sm:inline">Download</span>
+          </button>
         )}
 
-        {/* Quick peek eye icon */}
-        <div className="relative shrink-0">
+        {/* 2.8 Docs & Manual Button */}
+        {onOpenDocsTab && (
           <button
-            onClick={() => setShowQuickVars(!showQuickVars)}
-            className={`h-6 w-6 inline-flex items-center justify-center p-0 rounded transition-colors shrink-0 ${
-              showQuickVars ? 'bg-orange-500/20 text-orange-400' : 'hover:bg-white/10 text-zinc-400 hover:text-white'
-            }`}
-            title="Quick View & Add Variables"
+            onClick={onOpenDocsTab}
+            id="nav-docs-btn"
+            className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 bg-zinc-800/80 hover:bg-zinc-700/80 border border-white/10 text-zinc-300 hover:text-white rounded-lg text-xs font-semibold transition-all shadow-sm cursor-pointer shrink-0 whitespace-nowrap"
+            title="Open Documentation, User Manuals & Architecture Guides"
           >
-            <Eye className="w-3.5 h-3.5" />
+            <BookOpen className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+            <span className="whitespace-nowrap hidden lg:inline">Docs & Manual</span>
+            <span className="whitespace-nowrap hidden sm:inline lg:hidden">Docs</span>
           </button>
-          {showQuickVars && (
-            <QuickVariablePopover
-              variables={scopedVariables}
-              environments={environments}
-              activeEnvId={activeEnvId}
-              currentCollection={currentCollection}
-              onOpenManager={() => {
-                setShowQuickVars(false);
-                onOpenEnvManager();
-              }}
-              onQuickAddVariable={onQuickAddVariable}
-              onQuickUpdateVariable={onQuickUpdateVariable}
-              onClose={() => setShowQuickVars(false)}
-            />
-          )}
-        </div>
+        )}
+
+        {/* 2.9 ? Option (User Guide) */}
+        {onOpenHelpModal && (
+          <button
+            onClick={onOpenHelpModal}
+            id="nav-help-guide-btn"
+            className="h-8 w-8 inline-flex items-center justify-center bg-[#141824] hover:bg-white/10 border border-white/10 text-orange-400 hover:text-white rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer shrink-0"
+            title="How to use this tool"
+            aria-label="User Guide"
+          >
+            <HelpCircle className="w-4 h-4 text-orange-400 shrink-0" />
+          </button>
+        )}
+
+        {/* 2.10 Invite Collaborators Button */}
+        <button
+          onClick={onOpenShareModal}
+          className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 bg-orange-500 hover:bg-orange-600 font-semibold text-white rounded-lg text-xs transition-colors shadow-sm cursor-pointer shrink-0 whitespace-nowrap"
+          title="Invite Team Members to Workspace"
+        >
+          <Share2 className="w-3.5 h-3.5 shrink-0" />
+          <span className="whitespace-nowrap hidden sm:inline">Invite</span>
+        </button>
+
+        {/* 2.11 Guest Session Code Badge (if guest) */}
+        {isGuest && (
+          <div 
+            className="h-8 inline-flex items-center gap-1 px-2 sm:px-2.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 text-amber-300 rounded-lg text-[11px] font-mono transition-colors cursor-pointer shrink-0 whitespace-nowrap"
+            title="Isolated Guest Session: Click to manage or change guest session."
+            onClick={onResetGuestSession}
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span className="whitespace-nowrap">Guest #{guestShortCode || 'LOCAL'}</span>
+          </div>
+        )}
       </div>
 
-      {/* 10. Download Desktop App & Distributions Button (Unified across Desktop & Web) */}
-      {onOpenDownloadModal && (
-        <button
-          onClick={onOpenDownloadModal}
-          id="nav-download-desktop-btn"
-          className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 bg-gradient-to-r from-orange-500/15 to-amber-500/15 hover:from-orange-500/25 hover:to-amber-500/25 border border-orange-500/35 text-orange-300 hover:text-white rounded-lg text-xs font-semibold transition-all shadow-sm cursor-pointer shrink-0 whitespace-nowrap"
-          title="Download CloudPost Desktop App & Distributions (Windows, macOS, Linux, PHP)"
-        >
-          <Download className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-          <span className="whitespace-nowrap hidden sm:inline">Download</span>
-        </button>
-      )}
-
-      {/* 11. Docs & Manual Button */}
-      {onOpenDocsTab && (
-        <button
-          onClick={onOpenDocsTab}
-          id="nav-docs-btn"
-          className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 bg-zinc-800/80 hover:bg-zinc-700/80 border border-white/10 text-zinc-300 hover:text-white rounded-lg text-xs font-semibold transition-all shadow-sm cursor-pointer shrink-0 whitespace-nowrap"
-          title="Open Documentation, User Manuals & Architecture Guides"
-        >
-          <BookOpen className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-          <span className="whitespace-nowrap hidden lg:inline">Docs & Manual</span>
-          <span className="whitespace-nowrap hidden sm:inline lg:hidden">Docs</span>
-        </button>
-      )}
-
-      {/* ? Option (User Guide on how to use this tool, no architecture/database/technology internals) */}
-      {onOpenHelpModal && (
-        <button
-          onClick={onOpenHelpModal}
-          id="nav-help-guide-btn"
-          className="h-8 w-8 inline-flex items-center justify-center bg-[#141824] hover:bg-white/10 border border-white/10 text-orange-400 hover:text-white rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer shrink-0"
-          title="How to use this tool"
-          aria-label="User Guide"
-        >
-          <HelpCircle className="w-4 h-4 text-orange-400 shrink-0" />
-        </button>
-      )}
-
-      {/* 12. Invite Collaborators Button */}
-      <button
-        onClick={onOpenShareModal}
-        className="h-8 inline-flex items-center gap-1.5 px-2 sm:px-2.5 bg-orange-500 hover:bg-orange-600 font-semibold text-white rounded-lg text-xs transition-colors shadow-sm cursor-pointer shrink-0 whitespace-nowrap"
-        title="Invite Team Members to Workspace"
-      >
-        <Share2 className="w-3.5 h-3.5 shrink-0" />
-        <span className="whitespace-nowrap hidden sm:inline">Invite</span>
-      </button>
-
-      {/* 13. Guest Session Code Badge (if guest) */}
-      {isGuest && (
-        <div 
-          className="h-8 inline-flex items-center gap-1 px-2 sm:px-2.5 bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 text-amber-300 rounded-lg text-[11px] font-mono transition-colors cursor-pointer shrink-0 whitespace-nowrap"
-          title="Isolated Guest Session: Click to start a fresh clean guest session."
-          onClick={onResetGuestSession}
-        >
-          <ShieldCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-          <span className="whitespace-nowrap">Guest #{guestShortCode || 'LOCAL'}</span>
-        </div>
-      )}
-
-      {/* 14 & 15. Sign In & Register (Always Anchored on Right, Never Clipped) */}
-      <div className="relative shrink-0 flex items-center gap-1.5 sm:gap-2 ml-auto" ref={userRef} id="navbar-auth-actions">
+      {/* 3. RIGHT SECTION (Always Fixed & Anchored on Right, NEVER CLIPPED): Sign In & Register */}
+      <div className="relative shrink-0 flex items-center gap-1.5 sm:gap-2 ml-1" ref={userRef} id="navbar-auth-actions">
         {isGuest ? (
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <button
@@ -583,67 +593,80 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         )}
 
-          {showUserDropdown && !isGuest && (
-            <div className="absolute right-0 top-full mt-1.5 w-64 bg-[#141824] border border-white/10 rounded-xl shadow-2xl z-50 p-2 space-y-1 text-xs">
-              <div className="p-2 border-b border-white/10">
-                <div className="font-bold text-white truncate">{currentUser?.name}</div>
-                <div className="text-[11px] text-zinc-400 truncate">{currentUser?.email}</div>
-                <div className="mt-1 inline-block px-2 py-0.5 rounded bg-orange-500/20 text-orange-300 font-mono text-[10px]">
-                  Role: {currentRole}
-                </div>
+        {showUserDropdown && !isGuest && (
+          <div className="absolute right-0 top-full mt-1.5 w-64 bg-[#141824] border border-white/10 rounded-xl shadow-2xl z-50 p-2 space-y-1 text-xs">
+            <div className="p-2 border-b border-white/10">
+              <div className="font-bold text-white truncate">{currentUser?.name}</div>
+              <div className="text-[11px] text-zinc-400 truncate">{currentUser?.email}</div>
+              <div className="mt-1 inline-block px-2 py-0.5 rounded bg-orange-500/20 text-orange-300 font-mono text-[10px]">
+                Role: {currentRole}
               </div>
-
-              {/* SaaS User features accessible across Web & Desktop */}
-              {onOpenSaaSUsers && (
-                <button
-                  onClick={() => {
-                    setShowUserDropdown(false);
-                    onOpenSaaSUsers();
-                  }}
-                  className="w-full text-left p-2 rounded-lg text-zinc-200 hover:text-white hover:bg-white/5 flex items-center gap-2"
-                >
-                  <Users className="w-3.5 h-3.5 text-orange-400" />
-                  <span>SaaS Customer Hub & Costs</span>
-                </button>
-              )}
-
-              {onOpenSaaSReports && (
-                <button
-                  onClick={() => {
-                    setShowUserDropdown(false);
-                    onOpenSaaSReports();
-                  }}
-                  className="w-full text-left p-2 rounded-lg text-zinc-200 hover:text-white hover:bg-white/5 flex items-center gap-2"
-                >
-                  <TrendingUp className="w-3.5 h-3.5 text-purple-400" />
-                  <span>SaaS Financial Reports</span>
-                </button>
-              )}
-
-              <button
-                onClick={() => {
-                  setShowUserDropdown(false);
-                  onOpenLandingPage();
-                }}
-                className="w-full text-left p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 flex items-center gap-2"
-              >
-                <Home className="w-3.5 h-3.5 text-zinc-400" />
-                <span>Home</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setShowUserDropdown(false);
-                  onLogout();
-                }}
-                className="w-full text-left p-2 rounded-lg text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 border-t border-white/5 mt-1"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Log Out</span>
-              </button>
             </div>
-          )}
-        </div>
+
+            {/* SaaS User features accessible across Web & Desktop */}
+            {onOpenSaaSUsers && (
+              <button
+                onClick={() => {
+                  setShowUserDropdown(false);
+                  onOpenSaaSUsers();
+                }}
+                className="w-full text-left p-2 rounded-lg text-zinc-200 hover:text-white hover:bg-white/5 flex items-center gap-2"
+              >
+                <Users className="w-3.5 h-3.5 text-orange-400" />
+                <span>SaaS Customer Hub & Costs</span>
+              </button>
+            )}
+
+            {onOpenSaaSReports && (
+              <button
+                onClick={() => {
+                  setShowUserDropdown(false);
+                  onOpenSaaSReports();
+                }}
+                className="w-full text-left p-2 rounded-lg text-zinc-200 hover:text-white hover:bg-white/5 flex items-center gap-2"
+              >
+                <TrendingUp className="w-3.5 h-3.5 text-purple-400" />
+                <span>SaaS Financial Reports</span>
+              </button>
+            )}
+
+            {onOpenRegister && (
+              <button
+                onClick={() => {
+                  setShowUserDropdown(false);
+                  onOpenRegister();
+                }}
+                className="w-full text-left p-2 rounded-lg text-amber-300 hover:text-white hover:bg-white/5 flex items-center gap-2"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Register New Account</span>
+              </button>
+            )}
+
+            <button
+              onClick={() => {
+                setShowUserDropdown(false);
+                onOpenLandingPage();
+              }}
+              className="w-full text-left p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 flex items-center gap-2"
+            >
+              <Home className="w-3.5 h-3.5 text-zinc-400" />
+              <span>Home</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setShowUserDropdown(false);
+                onLogout();
+              }}
+              className="w-full text-left p-2 rounded-lg text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 border-t border-white/5 mt-1"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Log Out</span>
+            </button>
+          </div>
+        )}
+      </div>
     </header>
   );
 };

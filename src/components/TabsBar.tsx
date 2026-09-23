@@ -47,6 +47,7 @@ interface TabsBarProps {
   onOpenDocsTab?: () => void;
   onOpenHelpModal?: () => void;
   onOpenDiffTab?: () => void;
+  onOpenRegisterTab?: () => void;
   isSidebarOpen?: boolean;
   onToggleSidebar?: () => void;
   layoutMode?: 'columns' | 'rows';
@@ -117,6 +118,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
   onOpenDocsTab,
   onOpenHelpModal,
   onOpenDiffTab,
+  onOpenRegisterTab,
   isSidebarOpen = true,
   onToggleSidebar,
   layoutMode = 'columns',
@@ -413,7 +415,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                 </button>
               )}
 
-              {isSaaSUser && onOpenDocsTab && (
+              {onOpenDocsTab && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenDocsTab(); }}
                   className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
@@ -440,6 +442,16 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                 >
                   <GitCompare className="w-3.5 h-3.5 text-emerald-400" />
                   <span>Response Diff Inspector</span>
+                </button>
+              )}
+
+              {onOpenRegisterTab && (
+                <button
+                  onClick={() => { setShowToolsDropdown(false); onOpenRegisterTab(); }}
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-amber-300 hover:text-white hover:bg-amber-500/10 text-left transition-colors font-semibold border-t border-white/5 mt-1"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Register Account</span>
                 </button>
               )}
 

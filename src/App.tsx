@@ -65,6 +65,7 @@ import { getApiUrl } from './config';
 import { DownloadModal } from './components/Download/DownloadModal';
 import { DesktopUpdateBanner } from './components/Desktop/DesktopUpdateBanner';
 import { UserGuideModal } from './components/Help/UserGuideModal';
+import { GuestResetConfirmModal } from './components/Modals/GuestResetConfirmModal';
 
 export default function App() {
   // 0. Auth & Landing Page View State
@@ -87,6 +88,7 @@ export default function App() {
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
   const [showDownloadModal, setShowDownloadModal] = useState<boolean>(false);
   const [showHelpModal, setShowHelpModal] = useState<boolean>(false);
+  const [showGuestResetConfirmModal, setShowGuestResetConfirmModal] = useState<boolean>(false);
 
   // 1. Core State
   const [workspaces, setWorkspaces] = useState<Workspace[]>(() => {
@@ -706,6 +708,18 @@ export default function App() {
     setShowLandingPage(false);
   };
 
+  const handleConfirmResetGuestSession = () => {
+    setShowGuestResetConfirmModal(false);
+    const newGuest = resetGuestSession();
+    setGuestId(newGuest);
+    const newShortCode = getGuestShortCode(newGuest);
+    addNotification({
+      type: 'info',
+      title: 'Guest Session Changed',
+      message: `Switched to clean session (Guest #${newShortCode}). Previous data remains saved under its guest identity.`,
+    });
+  };
+
   // Derived Active Entities
   const currentWorkspace = useMemo(() => {
     return workspaces.find(w => w.id === currentWorkspaceId) || workspaces[0];
@@ -1295,6 +1309,12 @@ export default function App() {
             break;
           case 'open-docs':
             handleOpenDocsTab();
+            break;
+          case 'open-register':
+            handleOpenRegisterTab();
+            break;
+          case 'open-auth':
+            setShowAuthModal(true);
             break;
           case 'open-runner':
             handleOpenRunner();
@@ -2025,8 +2045,7 @@ export default function App() {
         onOpenAuthModal={() => setShowAuthModal(true)}
         guestShortCode={guestShortCode}
         onResetGuestSession={() => {
-          const newG = resetGuestSession();
-          setGuestId(newG);
+          setShowGuestResetConfirmModal(true);
         }}
         onLogout={handleLogout}
       />
@@ -2127,6 +2146,7 @@ export default function App() {
             onOpenDocsTab={handleOpenDocsTab}
             onOpenHelpModal={() => setShowHelpModal(true)}
             onOpenDiffTab={handleOpenDiffTab}
+            onOpenRegisterTab={handleOpenRegisterTab}
             isSidebarOpen={isSidebarOpen}
             onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}
             layoutMode={layoutMode}
@@ -2488,6 +2508,15 @@ export default function App() {
           if (col) handleOpenRunner(col);
         }}
         onOpenImport={handleOpenImportModal}
+      />
+
+      {/* Guest Session Reset Confirmation Modal */}
+      <GuestResetConfirmModal
+        isOpen={showGuestResetConfirmModal}
+        currentGuestShortCode={guestShortCode}
+        onConfirm={handleConfirmResetGuestSession}
+        onCancel={() => setShowGuestResetConfirmModal(false)}
+        onOpenRegister={handleOpenRegisterTab}
       />
 
       {/* Floating Toast Notification */}

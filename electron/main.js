@@ -301,6 +301,21 @@ function createWindow() {
       ]
     },
     {
+      label: 'Account',
+      submenu: [
+        {
+          label: 'Register New Account...',
+          accelerator: 'CmdOrCtrl+Shift+U',
+          click: () => sendMenuAction('open-register')
+        },
+        {
+          label: 'Sign In...',
+          accelerator: 'CmdOrCtrl+U',
+          click: () => sendMenuAction('open-auth')
+        }
+      ]
+    },
+    {
       label: 'Help',
       submenu: [
         {

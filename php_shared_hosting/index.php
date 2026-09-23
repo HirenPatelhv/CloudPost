@@ -548,6 +548,10 @@ $initialView = (isset($_GET['view']) && $_GET['view'] === 'landing') ? 'landing'
                                 <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-purple-400" v-html="renderIcon('trending-up', 'w-3.5 h-3.5')"></span>
                                 <span>Financial Reports</span>
                             </button>
+                            <button @click="openRegisterTab(); showUserDropdown = false" class="w-full text-left p-2 rounded-lg text-amber-300 hover:bg-white/5 flex items-center gap-2 text-xs transition-colors">
+                                <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-amber-400" v-html="renderIcon('user-plus', 'w-3.5 h-3.5')"></span>
+                                <span>Register New Account</span>
+                            </button>
                             <button @click="navigate('/auth?action=logout')" class="w-full text-left p-2 rounded-lg text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 text-xs transition-colors">
                                 <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5" v-html="renderIcon('log-out', 'w-3.5 h-3.5')"></span>
                                 <span>Sign Out</span>
@@ -556,6 +560,13 @@ $initialView = (isset($_GET['view']) && $_GET['view'] === 'landing') ? 'landing'
                     </div>
                 <?php else: ?>
                     <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                        <!-- Guest Session Label / Badge (Click takes confirmation first) -->
+                        <button type="button" @click="requestGuestResetConfirmation()" id="php-guest-badge" 
+                            class="h-8 inline-flex items-center gap-1.5 px-2.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 text-amber-300 rounded-lg text-xs font-mono transition-colors cursor-pointer shrink-0 whitespace-nowrap" 
+                            title="Guest Session: Click to change or start fresh guest session">
+                            <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-amber-400" v-html="renderIcon('shield-check', 'w-3.5 h-3.5 text-amber-400')"></span>
+                            <span class="whitespace-nowrap font-medium">Guest #{{ guestShortCode }}</span>
+                        </button>
                         <button @click="openModal('authModal')" id="php-signin-btn" class="h-8 inline-flex items-center gap-1.5 px-3 text-xs font-semibold text-zinc-100 hover:text-white rounded-lg hover:bg-white/15 bg-white/10 border border-white/15 transition-all shrink-0 whitespace-nowrap cursor-pointer shadow-sm hover:shadow" title="Sign In">
                             <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-orange-400" v-html="renderIcon('log-in', 'w-3.5 h-3.5')"></span>
                             <span class="whitespace-nowrap font-medium">Sign In</span>
@@ -4981,6 +4992,62 @@ CREATE TABLE cp_requests (
         </div>
     </div>
 
+    <!-- Guest Reset Confirmation Modal (PHP Parity) -->
+    <div v-if="activeModal === 'guestResetConfirmModal'" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-[#131724] border border-amber-500/30 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                    <span class="inline-flex items-center justify-center shrink-0 w-5 h-5" v-html="renderIcon('shield-alert', 'w-5 h-5 text-amber-400')"></span>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white">Change Guest User Session?</h3>
+                    <p class="text-xs text-amber-400 font-medium">Confirmation required before changing guest session</p>
+                </div>
+            </div>
+
+            <div class="bg-[#181d2d] border border-white/10 rounded-xl p-3 flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span class="text-zinc-400">Current Guest User:</span>
+                    <span class="font-mono font-bold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                        Guest #{{ guestShortCode }}
+                    </span>
+                </div>
+                <span class="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Active</span>
+            </div>
+
+            <div class="space-y-2 text-xs text-zinc-300 leading-relaxed">
+                <div class="p-3 bg-amber-500/5 border border-amber-500/20 rounded-xl flex gap-2.5 items-start">
+                    <span class="inline-flex items-center justify-center shrink-0 w-4 h-4 text-amber-400 mt-0.5" v-html="renderIcon('alert-triangle', 'w-4 h-4 text-amber-400')"></span>
+                    <p>
+                        Are you sure you want to change your guest user? Starting a fresh guest session assigns a new guest identity. Your existing workspace and request data will remain stored in browser memory under your current guest ID.
+                    </p>
+                </div>
+                <p class="text-zinc-400 text-[11.5px]">
+                    To save your workspaces permanently and access them across devices or collaborate with team members, consider registering a free account.
+                </p>
+            </div>
+
+            <div class="pt-2 flex items-center justify-end gap-2 border-t border-white/10">
+                <button type="button" @click="activeModal = null" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium text-xs">
+                    Cancel (Keep Current)
+                </button>
+                <button type="button" @click="confirmGuestReset()" id="php-confirm-guest-reset-btn" class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-orange-500/20">
+                    <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5" v-html="renderIcon('refresh-cw', 'w-3.5 h-3.5')"></span>
+                    <span>Confirm & Change Guest</span>
+                </button>
+            </div>
+
+            <div class="pt-2 border-t border-white/5 flex items-center justify-between text-xs">
+                <span class="text-zinc-400 text-[11px]">Want permanent cloud backup?</span>
+                <button type="button" @click="activeModal = null; openRegisterTab()" class="text-orange-400 hover:text-orange-300 font-semibold flex items-center gap-1 text-xs">
+                    <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5" v-html="renderIcon('sparkles', 'w-3.5 h-3.5 text-amber-400')"></span>
+                    <span>Register Account Instead</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- New Workspace Modal -->
     <div v-if="activeModal === 'newWorkspaceModal'" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4">
@@ -6185,6 +6252,25 @@ app.Run();`,
                 } catch (e) {}
             }
             return gid;
+        };
+
+        const guestShortCode = computed(() => {
+            const gid = getClientGuestId();
+            return gid.replace(/^guest_/, '').slice(-6).toUpperCase();
+        });
+
+        const requestGuestResetConfirmation = () => {
+            activeModal.value = 'guestResetConfirmModal';
+        };
+
+        const confirmGuestReset = () => {
+            activeModal.value = null;
+            const newGuestId = 'guest_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 9);
+            localStorage.setItem('cp_guest_id', newGuestId);
+            try {
+                document.cookie = `cp_guest_id=${encodeURIComponent(newGuestId)}; path=/; max-age=31536000; SameSite=Lax`;
+            } catch (e) {}
+            window.location.reload();
         };
 
         const persistRequestAndResponseToPhp = async (reqObj, respObj) => {
@@ -11750,6 +11836,7 @@ ${headerAdders}
             workspaces, activeWorkspaceId, activeWorkspace, environments, activeEnvId, activeEnv, collections,
             collapsedCollections, collapsedFolders, recentRequests, runnerSelectedCollectionId, tabs, activeTabId, activeTab, activeRequest, activeResponse,
             openArchitectureTab, openSaaSUsersTab, openSaaSReportsTab, openRegisterTab, openDiagnosticTab, isSaaSAdmin,
+            guestShortCode, requestGuestResetConfirmation, confirmGuestReset,
             diagnosticScanning, dbConnected, dbTesting, dbTestResult, dbTestConfig, runDiagnosticScan, testDbConnection,
             archSubTab, sqlCopied, copySqlSchema,
             currentDemoUser, switchToDemoUser, saasSearch, saasPlanFilter, saasSortBy, saasCustomers, filteredSaaSCustomers, saasMetrics,
