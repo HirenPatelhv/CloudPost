@@ -1008,8 +1008,38 @@ $initialView = (isset($_GET['view']) && $_GET['view'] === 'landing') ? 'landing'
                                     <span>Change Guest User...</span>
                                 </button>
 
-                                <div class="pt-1 border-t border-white/5 my-1"></div>
-                                <button v-if="isSaaSAdmin" type="button" @click="openArchitectureTab(); showToolsDropdown = false" class="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 text-xs text-zinc-300 hover:text-white transition-colors">
+                                <div class="pt-1 border-t border-white/5 my-1">
+                                    <div class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-zinc-500">
+                                        Protocols & Testing
+                                    </div>
+                                </div>
+                                <button type="button" @click="openCollectionRunnerTab(); showToolsDropdown = false" class="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 text-xs text-orange-300 hover:text-white transition-colors">
+                                    <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-orange-400" v-html="renderIcon('play', 'w-3.5 h-3.5')"></span>
+                                    <span>Collection Runner & Tests</span>
+                                </button>
+                                <button type="button" @click="openWebSocketTab(); showToolsDropdown = false" class="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 text-xs text-zinc-300 hover:text-white transition-colors">
+                                    <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-emerald-400" v-html="renderIcon('radio', 'w-3.5 h-3.5')"></span>
+                                    <span>WebSocket Tester</span>
+                                </button>
+                                <button type="button" @click="openMockServerTab(); showToolsDropdown = false" class="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 text-xs text-zinc-300 hover:text-white transition-colors">
+                                    <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-amber-400" v-html="renderIcon('server', 'w-3.5 h-3.5')"></span>
+                                    <span>Mock Server Engine</span>
+                                </button>
+                                <button type="button" @click="openGraphQLTab(); showToolsDropdown = false" class="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 text-xs text-zinc-300 hover:text-white transition-colors">
+                                    <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-pink-400" v-html="renderIcon('code-2', 'w-3.5 h-3.5')"></span>
+                                    <span>GraphQL Explorer</span>
+                                </button>
+                                <button type="button" @click="openMonitorTab(); showToolsDropdown = false" class="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 text-xs text-zinc-300 hover:text-white transition-colors">
+                                    <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-teal-400" v-html="renderIcon('activity', 'w-3.5 h-3.5')"></span>
+                                    <span>Monitors & Health</span>
+                                </button>
+
+                                <div class="pt-1 border-t border-white/5 my-1">
+                                    <div class="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-zinc-500">
+                                        Enterprise & Platform
+                                    </div>
+                                </div>
+                                <button type="button" @click="openArchitectureTab(); showToolsDropdown = false" class="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 text-xs text-orange-300 hover:text-orange-200 transition-colors">
                                     <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-orange-400" v-html="renderIcon('layers', 'w-3.5 h-3.5')"></span>
                                     <span>Architecture & DB</span>
                                 </button>
@@ -1021,21 +1051,9 @@ $initialView = (isset($_GET['view']) && $_GET['view'] === 'landing') ? 'landing'
                                     <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-purple-400" v-html="renderIcon('trending-up', 'w-3.5 h-3.5')"></span>
                                     <span>Financial Reports</span>
                                 </button>
-                                <button type="button" @click="openCollectionRunnerTab(); showToolsDropdown = false" class="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 text-xs text-zinc-300 hover:text-white transition-colors">
-                                    <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-amber-400" v-html="renderIcon('play', 'w-3.5 h-3.5')"></span>
-                                    <span>Collection Runner</span>
-                                </button>
                                 <button type="button" @click="openDiagnosticTab(); showToolsDropdown = false" class="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 text-xs text-zinc-300 hover:text-white transition-colors">
                                     <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-amber-400" v-html="renderIcon('shield-alert', 'w-3.5 h-3.5')"></span>
                                     <span>System Diagnostics</span>
-                                </button>
-                                <button type="button" @click="openWebSocketTab(); showToolsDropdown = false" class="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 text-xs text-zinc-300 hover:text-white transition-colors">
-                                    <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-emerald-400" v-html="renderIcon('radio', 'w-3.5 h-3.5')"></span>
-                                    <span>WebSocket Tester</span>
-                                </button>
-                                <button type="button" @click="openMockServerTab(); showToolsDropdown = false" class="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 text-xs text-zinc-300 hover:text-white transition-colors">
-                                    <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-amber-400" v-html="renderIcon('server', 'w-3.5 h-3.5')"></span>
-                                    <span>Mock Server Engine</span>
                                 </button>
                                 <button type="button" @click="openGraphQLTab(); showToolsDropdown = false" class="w-full flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5 text-xs text-zinc-300 hover:text-white transition-colors">
                                     <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5 text-pink-400" v-html="renderIcon('code-2', 'w-3.5 h-3.5')"></span>

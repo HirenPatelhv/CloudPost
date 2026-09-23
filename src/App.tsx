@@ -1325,6 +1325,21 @@ export default function App() {
           case 'open-runner':
             handleOpenRunner();
             break;
+          case 'open-monitors':
+            handleOpenMonitorTab();
+            break;
+          case 'open-saas-users':
+            handleOpenSaaSUsersTab();
+            break;
+          case 'open-saas-reports':
+            handleOpenSaaSReportsTab();
+            break;
+          case 'open-architecture':
+            handleOpenArchitectureTab();
+            break;
+          case 'open-help':
+            setShowHelpModal(true);
+            break;
           case 'import':
             setImportExportModalState({ isOpen: true, initialTab: 'import' });
             break;

@@ -302,12 +302,34 @@ function createWindow() {
           click: () => sendMenuAction('open-mock-server')
         },
         {
+          label: 'Monitors & Health Checks',
+          click: () => sendMenuAction('open-monitors')
+        },
+        { type: 'separator' },
+        {
           label: 'Response Diff Inspector',
           click: () => sendMenuAction('open-diff')
         },
         {
           label: 'API Reference Docs',
           click: () => sendMenuAction('open-docs')
+        },
+        {
+          label: 'User Guide & Shortcuts',
+          click: () => sendMenuAction('open-help')
+        },
+        { type: 'separator' },
+        {
+          label: 'SaaS Users & Costs',
+          click: () => sendMenuAction('open-saas-users')
+        },
+        {
+          label: 'SaaS Revenue Reports',
+          click: () => sendMenuAction('open-saas-reports')
+        },
+        {
+          label: 'Architecture & DB Schema',
+          click: () => sendMenuAction('open-architecture')
         }
       ]
     },

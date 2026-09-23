@@ -361,7 +361,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenRegisterTab(); }}
                   id="tools-register-btn"
-                  className="w-full flex items-center justify-between p-2 rounded-lg bg-gradient-to-r from-amber-500/15 to-orange-500/15 hover:from-amber-500/25 hover:to-orange-500/25 text-amber-200 hover:text-white border border-amber-500/30 text-left transition-colors font-semibold"
+                  className="w-full flex items-center justify-between p-2 rounded-lg bg-gradient-to-r from-amber-500/15 to-orange-500/15 hover:from-amber-500/25 hover:to-orange-500/25 text-amber-200 hover:text-white border border-amber-500/30 text-left transition-colors font-semibold cursor-pointer"
                 >
                   <div className="flex items-center gap-2">
                     <UserPlus className="w-3.5 h-3.5 text-amber-400 shrink-0" />
@@ -375,7 +375,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenImport(); }}
                   id="tools-restore-btn"
-                  className="w-full flex items-center justify-between p-2 rounded-lg text-emerald-300 hover:text-white hover:bg-emerald-500/10 text-left transition-colors font-semibold"
+                  className="w-full flex items-center justify-between p-2 rounded-lg text-emerald-300 hover:text-white hover:bg-emerald-500/10 text-left transition-colors font-semibold cursor-pointer"
                   title="Restore collections and workspaces from backup or JSON files"
                 >
                   <div className="flex items-center gap-2">
@@ -386,11 +386,11 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                 </button>
               )}
 
-              {isGuest && onResetGuestSession && (
+              {onResetGuestSession && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onResetGuestSession(); }}
                   id="tools-guest-session-btn"
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-amber-300 hover:bg-amber-500/10 text-left transition-colors"
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-amber-300 hover:bg-amber-500/10 text-left transition-colors cursor-pointer"
                   title="Change Guest User Session (opens confirmation first)"
                 >
                   <ShieldAlert className="w-3.5 h-3.5 text-amber-400 shrink-0" />
@@ -398,12 +398,16 @@ export const TabsBar: React.FC<TabsBarProps> = ({
                 </button>
               )}
 
-              <div className="pt-1 border-t border-white/5 my-1"></div>
+              <div className="pt-1 border-t border-white/5 my-1">
+                <div className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-zinc-500">
+                  Protocols & Testing
+                </div>
+              </div>
 
               {onOpenRunnerTab && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenRunnerTab(); }}
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-orange-300 hover:text-white hover:bg-white/5 text-left transition-colors font-medium"
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-orange-300 hover:text-white hover:bg-white/5 text-left transition-colors font-medium cursor-pointer"
                 >
                   <Play className="w-3.5 h-3.5 text-orange-400 fill-orange-400 shrink-0" />
                   <span>Collection Runner & Tests</span>
@@ -413,7 +417,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
               {onOpenWebSocketTab && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenWebSocketTab(); }}
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors cursor-pointer"
                 >
                   <Radio className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                   <span>WebSocket Tester</span>
@@ -423,7 +427,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
               {onOpenMockServerTab && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenMockServerTab(); }}
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors cursor-pointer"
                 >
                   <Server className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                   <span>Mock Server Engine</span>
@@ -433,7 +437,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
               {onOpenGraphQLTab && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenGraphQLTab(); }}
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors cursor-pointer"
                 >
                   <Code2 className="w-3.5 h-3.5 text-pink-400 shrink-0" />
                   <span>GraphQL Explorer</span>
@@ -443,7 +447,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
               {onOpenMonitorTab && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenMonitorTab(); }}
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors cursor-pointer"
                 >
                   <Activity className="w-3.5 h-3.5 text-teal-400 shrink-0" />
                   <span>Monitors & Health</span>
@@ -453,7 +457,7 @@ export const TabsBar: React.FC<TabsBarProps> = ({
               {onOpenSSETab && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenSSETab(); }}
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors cursor-pointer"
                 >
                   <Radio className="w-3.5 h-3.5 text-orange-400 shrink-0" />
                   <span>SSE Stream Tester</span>
@@ -463,17 +467,33 @@ export const TabsBar: React.FC<TabsBarProps> = ({
               {onOpenGRPCTab && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenGRPCTab(); }}
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors cursor-pointer"
                 >
                   <Server className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                   <span>gRPC Protocol Explorer</span>
                 </button>
               )}
 
+              <div className="pt-1 border-t border-white/5 my-1">
+                <div className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-zinc-500">
+                  Inspection & Help
+                </div>
+              </div>
+
+              {onOpenDiffTab && (
+                <button
+                  onClick={() => { setShowToolsDropdown(false); onOpenDiffTab(); }}
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors cursor-pointer"
+                >
+                  <GitCompare className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>Response Diff Inspector</span>
+                </button>
+              )}
+
               {onOpenDocsTab && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenDocsTab(); }}
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors cursor-pointer"
                 >
                   <BookOpen className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                   <span>Documentation & User Manuals</span>
@@ -483,27 +503,23 @@ export const TabsBar: React.FC<TabsBarProps> = ({
               {onOpenHelpModal && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenHelpModal(); }}
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors cursor-pointer"
                 >
                   <HelpCircle className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-                  <span>User Guide</span>
+                  <span>User Guide & Shortcuts</span>
                 </button>
               )}
 
-              {onOpenDiffTab && (
-                <button
-                  onClick={() => { setShowToolsDropdown(false); onOpenDiffTab(); }}
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
-                >
-                  <GitCompare className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span>Response Diff Inspector</span>
-                </button>
-              )}
+              <div className="pt-1 border-t border-white/5 my-1">
+                <div className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-zinc-500">
+                  Enterprise & Architecture
+                </div>
+              </div>
 
               {onOpenSaaSUsersTab && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenSaaSUsersTab(); }}
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors cursor-pointer"
                 >
                   <Users className="w-3.5 h-3.5 text-orange-400 shrink-0" />
                   <span>SaaS Users & Costs</span>
@@ -513,23 +529,21 @@ export const TabsBar: React.FC<TabsBarProps> = ({
               {onOpenSaaSReportsTab && (
                 <button
                   onClick={() => { setShowToolsDropdown(false); onOpenSaaSReportsTab(); }}
-                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors"
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-zinc-300 hover:text-white hover:bg-white/5 text-left transition-colors cursor-pointer"
                 >
                   <TrendingUp className="w-3.5 h-3.5 text-purple-400 shrink-0" />
                   <span>SaaS Revenue Reports</span>
                 </button>
               )}
 
-              {isSaaSAdmin && (
-                <div className="pt-1 border-t border-white/5">
-                  <button
-                    onClick={() => { setShowToolsDropdown(false); onOpenArchitectureTab(); }}
-                    className="w-full flex items-center gap-2 p-2 rounded-lg text-orange-300 hover:text-orange-200 hover:bg-white/5 text-left transition-colors font-medium"
-                  >
-                    <Sparkles className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-                    <span>Architecture & Schema</span>
-                  </button>
-                </div>
+              {onOpenArchitectureTab && (
+                <button
+                  onClick={() => { setShowToolsDropdown(false); onOpenArchitectureTab(); }}
+                  className="w-full flex items-center gap-2 p-2 rounded-lg text-orange-300 hover:text-orange-200 hover:bg-white/5 text-left transition-colors font-medium cursor-pointer"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+                  <span>Architecture & Schema</span>
+                </button>
               )}
             </div>
           )}
