@@ -968,7 +968,7 @@ $initialView = (isset($_GET['view']) && $_GET['view'] === 'landing') ? 'landing'
                     <!-- Layout Mode Switcher & Tools Dropdown for small screens (Responsive & Desktop) -->
                     <div class="flex items-center gap-1.5 shrink-0 pl-1">
                         <!-- Layout Mode (Columns vs Rows) -->
-                        <button type="button" @click="layoutMode = layoutMode === 'columns' ? 'rows' : 'columns'" :class="['px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-all cursor-pointer select-none active:scale-95', layoutMode === 'columns' ? 'bg-orange-500/15 border-orange-500/30 text-orange-300' : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300']" :title="layoutMode === 'columns' ? 'Side-by-Side view active: Click to switch to Stacked View (Rows)' : 'Stacked view active: Click to switch to Side-by-Side View (Columns)'">
+                        <button type="button" @click="toggleLayoutMode()" :class="['px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-all cursor-pointer select-none active:scale-95', layoutMode === 'columns' ? 'bg-orange-500/15 border-orange-500/30 text-orange-300' : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300']" :title="layoutMode === 'columns' ? 'Side-by-Side view active: Click to switch to Stacked View (Rows)' : 'Stacked view active: Click to switch to Side-by-Side View (Columns)'">
                             <span class="inline-flex items-center justify-center shrink-0 w-3.5 h-3.5" :class="layoutMode === 'columns' ? 'text-orange-400' : 'text-emerald-400'" v-html="renderIcon(layoutMode === 'columns' ? 'columns' : 'rows', 'w-3.5 h-3.5')"></span>
                             <span class="text-[11px]">{{ layoutMode === 'columns' ? 'Side-by-Side' : 'Stacked' }}</span>
                         </button>
@@ -2985,11 +2985,14 @@ CREATE TABLE cp_requests (
                 </div>
 
                 <!-- Active Request Area (Split Screen RequestBuilder & ResponseViewer - 100% Parity with React) -->
-                <div v-else-if="activeRequest" :class="['h-full flex overflow-hidden min-w-0', layoutMode === 'columns' ? 'flex-row' : 'flex-col']">
+                <div v-else-if="activeRequest" 
+                     ref="splitContainerRef"
+                     :class="['h-full flex overflow-hidden min-w-0', layoutMode === 'columns' ? 'flex-row' : 'flex-col']">
                     <!-- ========================================== -->
-                    <!-- LEFT HALF: RequestBuilder Component        -->
+                    <!-- LEFT / TOP HALF: RequestBuilder Component   -->
                     <!-- ========================================== -->
-                    <div :class="['overflow-hidden flex flex-col min-w-0 bg-[#11141e]', layoutMode === 'columns' ? 'flex-1 w-1/2 h-full border-r border-white/10' : 'flex-1 h-1/2 min-h-[380px] border-b border-white/10']">
+                    <div :style="layoutMode === 'columns' ? { width: splitRatioColumns + '%', height: '100%', flex: 'none' } : { height: splitRatioRows + '%', width: '100%', flex: 'none' }"
+                         :class="['overflow-hidden flex flex-col min-w-0 bg-[#11141e]', layoutMode === 'columns' ? 'min-w-[280px] max-w-[calc(100%-200px)]' : 'min-h-[180px] max-h-[calc(100%-140px)]']">
                         <!-- 1. Request Header Top Bar: Name & Actions -->
 <div class="p-3 sm:p-4 border-b border-white/10 bg-[#151926] space-y-3 shrink-0">
 <div class="flex flex-wrap lg:flex-nowrap items-center justify-between gap-2.5">
@@ -3655,9 +3658,75 @@ CREATE TABLE cp_requests (
                     </div>
 
                     <!-- ========================================== -->
-                    <!-- RIGHT HALF: ResponseViewer Component       -->
+                    <!-- INTERACTIVE RESIZABLE SPLITTER (100% Parity)-->
                     <!-- ========================================== -->
-                    <div :class="['overflow-hidden flex flex-col min-w-0 bg-[#0e111a]', layoutMode === 'columns' ? 'flex-1 w-1/2 h-full' : 'flex-1 h-1/2 min-h-[300px]']">
+                    <div role="separator"
+                         tabindex="0"
+                         :aria-orientation="layoutMode === 'columns' ? 'vertical' : 'horizontal'"
+                         :aria-valuenow="layoutMode === 'columns' ? splitRatioColumns : splitRatioRows"
+                         @mousedown="startSplitterDrag"
+                         @touchstart="startSplitterDrag"
+                         @dblclick="resetSplitRatio"
+                         @mouseenter="isSplitterHovered = true"
+                         @mouseleave="isSplitterHovered = false"
+                         title="Drag to resize panes | Double-click to reset 50:50 | Click layout button to switch view"
+                         :class="[
+                            'relative shrink-0 flex items-center justify-center transition-colors select-none group z-20 outline-none focus-visible:ring-1 focus-visible:ring-orange-500',
+                            layoutMode === 'columns' 
+                                ? 'w-2 hover:w-2 cursor-col-resize border-x border-white/5 bg-[#0f121c] hover:bg-orange-500/20 active:bg-orange-500/40' 
+                                : 'h-2 hover:h-2 cursor-row-resize border-y border-white/5 bg-[#0f121c] hover:bg-orange-500/20 active:bg-orange-500/40',
+                            isSplitterDragging ? 'bg-orange-500/40 border-orange-500/50' : ''
+                         ]">
+                        <!-- Expanded invisible grab hit area -->
+                        <div :class="[
+                            'absolute pointer-events-auto',
+                            layoutMode === 'columns' ? '-inset-x-2 inset-y-0 cursor-col-resize' : '-inset-y-2 inset-x-0 cursor-row-resize'
+                        ]"></div>
+
+                        <!-- Visual Accent Line -->
+                        <div :class="[
+                            'rounded-full transition-all duration-150',
+                            layoutMode === 'columns'
+                                ? ('w-0.5 ' + (isSplitterDragging || isSplitterHovered ? 'bg-orange-400 h-16' : 'bg-white/20 h-10'))
+                                : ('h-0.5 ' + (isSplitterDragging || isSplitterHovered ? 'bg-orange-400 w-16' : 'bg-white/20 w-10'))
+                        ]"></div>
+
+                        <!-- Floating Center Control Pill on Hover or Drag -->
+                        <div :class="[
+                            'absolute transition-all duration-200 pointer-events-auto flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[#181c2b] border border-orange-500/40 shadow-xl text-[10px] text-zinc-300 font-mono',
+                            (isSplitterHovered || isSplitterDragging) ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none',
+                            layoutMode === 'columns' ? 'top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2' : 'left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2'
+                        ]">
+                            <span class="inline-flex items-center justify-center shrink-0 w-3 h-3 text-orange-400"
+                                  v-html="renderIcon(layoutMode === 'columns' ? 'grip-vertical' : 'grip-horizontal', 'w-3 h-3 text-orange-400')"></span>
+                            <span class="text-[9px] font-semibold text-orange-200 whitespace-nowrap">
+                                {{ layoutMode === 'columns' ? (splitRatioColumns + ':' + (100 - splitRatioColumns)) : (splitRatioRows + ':' + (100 - splitRatioRows)) }}
+                            </span>
+                            <!-- 50:50 Reset Button -->
+                            <button v-if="(layoutMode === 'columns' ? splitRatioColumns : splitRatioRows) !== 50"
+                                    type="button"
+                                    @click.stop="resetSplitRatio"
+                                    title="Reset to 50:50 ratio"
+                                    class="p-0.5 rounded hover:bg-white/10 text-zinc-400 hover:text-white transition-colors cursor-pointer">
+                                <span class="inline-flex items-center justify-center shrink-0 w-2.5 h-2.5 text-zinc-300 hover:text-orange-400"
+                                      v-html="renderIcon('rotate-ccw', 'w-2.5 h-2.5')"></span>
+                            </button>
+                            <!-- Quick Layout Switcher button directly on the divider -->
+                            <button type="button"
+                                    @click.stop="toggleLayoutMode"
+                                    :title="layoutMode === 'columns' ? 'Switch to Stacked View (Top/Bottom)' : 'Switch to Side-by-Side View (Left/Right)'"
+                                    class="p-0.5 rounded hover:bg-orange-500/20 text-zinc-400 hover:text-orange-300 transition-colors cursor-pointer flex items-center gap-0.5 ml-0.5">
+                                <span class="inline-flex items-center justify-center shrink-0 w-2.5 h-2.5 text-orange-400"
+                                      v-html="renderIcon(layoutMode === 'columns' ? 'rows' : 'columns', 'w-2.5 h-2.5')"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- RIGHT / BOTTOM HALF: ResponseViewer        -->
+                    <!-- ========================================== -->
+                    <div :style="{ flex: '1 1 0%', minWidth: layoutMode === 'columns' ? '200px' : 0, minHeight: layoutMode === 'rows' ? '140px' : 0 }"
+                         class="overflow-hidden flex flex-col min-w-0 bg-[#0e111a] h-full">
                         <!-- 1. Response Metrics & Action Bar -->
 <div class="px-4 py-2.5 bg-[#141824] border-b border-white/10 flex items-center justify-between gap-4 shrink-0 text-xs">
                             <div class="flex items-center gap-3">
@@ -5752,7 +5821,9 @@ const SVG_ICONS = {
   rows: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 12h18"/></svg>',
   wrench: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
   "help-circle": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>',
-  "book-open": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>'
+  "book-open": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+  "grip-vertical": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>',
+  "grip-horizontal": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="1"/><circle cx="5" cy="9" r="1"/><circle cx="19" cy="9" r="1"/><circle cx="12" cy="15" r="1"/><circle cx="5" cy="15" r="1"/><circle cx="19" cy="15" r="1"/></svg>'
 };
 
 const renderIcon = (name, customClass = "w-4 h-4") => {
@@ -5796,7 +5867,96 @@ const app = Vue.createApp({
         const showUserDropdown = ref(false);
         const showRunnerModal = ref(false);
         const isSidebarOpen = ref(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
-        const layoutMode = ref('columns');
+        const layoutMode = ref((() => {
+            try {
+                const saved = localStorage.getItem('cp_layout_mode');
+                if (saved === 'columns' || saved === 'rows') return saved;
+            } catch(e) {}
+            return 'columns';
+        })());
+
+        const splitRatioColumns = ref((() => {
+            try {
+                const saved = localStorage.getItem('cp_split_ratio_cols');
+                if (saved) {
+                    const val = parseFloat(saved);
+                    if (!isNaN(val) && val >= 18 && val <= 82) return val;
+                }
+            } catch(e) {}
+            return 50;
+        })());
+
+        const splitRatioRows = ref((() => {
+            try {
+                const saved = localStorage.getItem('cp_split_ratio_rows');
+                if (saved) {
+                    const val = parseFloat(saved);
+                    if (!isNaN(val) && val >= 18 && val <= 82) return val;
+                }
+            } catch(e) {}
+            return 50;
+        })());
+
+        const isSplitterDragging = ref(false);
+        const isSplitterHovered = ref(false);
+        const splitContainerRef = ref(null);
+
+        const toggleLayoutMode = () => {
+            layoutMode.value = layoutMode.value === 'columns' ? 'rows' : 'columns';
+            try { localStorage.setItem('cp_layout_mode', layoutMode.value); } catch(e) {}
+        };
+
+        const resetSplitRatio = () => {
+            if (layoutMode.value === 'columns') {
+                splitRatioColumns.value = 50;
+                try { localStorage.setItem('cp_split_ratio_cols', '50'); } catch(e) {}
+            } else {
+                splitRatioRows.value = 50;
+                try { localStorage.setItem('cp_split_ratio_rows', '50'); } catch(e) {}
+            }
+        };
+
+        const startSplitterDrag = (e) => {
+            if (e.target && e.target.closest && e.target.closest('button')) return;
+            e.preventDefault();
+            isSplitterDragging.value = true;
+            document.body.style.userSelect = 'none';
+            document.body.style.cursor = layoutMode.value === 'columns' ? 'col-resize' : 'row-resize';
+
+            const onMove = (moveEvt) => {
+                if (!isSplitterDragging.value || !splitContainerRef.value) return;
+                const rect = splitContainerRef.value.getBoundingClientRect();
+                const clientX = moveEvt.touches ? moveEvt.touches[0].clientX : moveEvt.clientX;
+                const clientY = moveEvt.touches ? moveEvt.touches[0].clientY : moveEvt.clientY;
+
+                if (layoutMode.value === 'columns') {
+                    const offset = clientX - rect.left;
+                    const pct = Math.max(18, Math.min(82, Math.round((offset / rect.width) * 100)));
+                    splitRatioColumns.value = pct;
+                    try { localStorage.setItem('cp_split_ratio_cols', String(pct)); } catch(err) {}
+                } else {
+                    const offset = clientY - rect.top;
+                    const pct = Math.max(18, Math.min(82, Math.round((offset / rect.height) * 100)));
+                    splitRatioRows.value = pct;
+                    try { localStorage.setItem('cp_split_ratio_rows', String(pct)); } catch(err) {}
+                }
+            };
+
+            const onEnd = () => {
+                isSplitterDragging.value = false;
+                document.body.style.userSelect = '';
+                document.body.style.cursor = '';
+                window.removeEventListener('mousemove', onMove);
+                window.removeEventListener('mouseup', onEnd);
+                window.removeEventListener('touchmove', onMove);
+                window.removeEventListener('touchend', onEnd);
+            };
+
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('mouseup', onEnd);
+            window.addEventListener('touchmove', onMove, { passive: false });
+            window.addEventListener('touchend', onEnd);
+        };
         const showToolsDropdown = ref(false);
         const sidebarTab = ref('collections');
         const sidebarSearch = ref('');
@@ -11970,7 +12130,9 @@ ${headerAdders}
             // Workspace Parity
             newWorkspaceName, newWorkspaceType, newWorkspaceDesc, createWorkspace,
             // Responsive Parity
-            isSidebarOpen, layoutMode, showToolsDropdown
+            isSidebarOpen, layoutMode, showToolsDropdown,
+            // Pane Splitter Parity
+            splitRatioColumns, splitRatioRows, isSplitterDragging, isSplitterHovered, splitContainerRef, toggleLayoutMode, resetSplitRatio, startSplitterDrag
         };
     }
 });

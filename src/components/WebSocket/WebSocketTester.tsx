@@ -18,6 +18,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { WebSocketMessage } from '../../types';
+import { PaneSplitter } from '../Common/PaneSplitter';
 
 interface WebSocketTesterProps {
   initialUrl?: string;
@@ -53,6 +54,22 @@ export const WebSocketTester: React.FC<WebSocketTesterProps> = ({
   const socketRef = useRef<WebSocket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pingStartRef = useRef<number>(0);
+  const splitContainerRef = useRef<HTMLDivElement | null>(null);
+  const [splitRatio, setSplitRatio] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('cp_ws_split_ratio');
+      if (saved) {
+        const val = parseFloat(saved);
+        if (!isNaN(val) && val >= 18 && val <= 82) return val;
+      }
+    } catch (e) {}
+    return 42;
+  });
+
+  const handleRatioChange = (val: number) => {
+    setSplitRatio(val);
+    try { localStorage.setItem('cp_ws_split_ratio', String(val)); } catch (e) {}
+  };
 
   // Connection timer
   useEffect(() => {
@@ -352,13 +369,24 @@ export const WebSocketTester: React.FC<WebSocketTesterProps> = ({
       </div>
 
       {/* Main Split: Left Composer, Right Live Message Stream */}
-      <div className={`flex-1 flex ${layoutMode === 'rows' ? 'flex-col' : 'flex-row'} overflow-hidden min-w-0`}>
+      <div
+        ref={splitContainerRef}
+        className={`flex-1 flex ${layoutMode === 'rows' ? 'flex-col' : 'flex-row'} overflow-hidden min-w-0`}
+      >
         {/* Left: Message Composer */}
-        <div className={`overflow-hidden flex flex-col bg-[#111420] min-w-0 ${
-          layoutMode === 'rows'
-            ? 'w-full h-1/2 min-h-[220px] border-b border-white/10'
-            : 'w-full md:w-5/12 border-r border-white/10 h-full'
-        }`}>
+        <div
+          style={{
+            flex: 'none',
+            ...(layoutMode === 'rows'
+              ? { height: `${splitRatio}%`, width: '100%' }
+              : { width: `${splitRatio}%`, height: '100%' })
+          }}
+          className={`overflow-hidden flex flex-col bg-[#111420] min-w-0 ${
+            layoutMode === 'rows'
+              ? 'min-h-[160px] max-h-[calc(100%-140px)]'
+              : 'min-w-[240px] max-w-[calc(100%-200px)]'
+          }`}
+        >
           <div className="p-2.5 border-b border-white/10 flex items-center justify-between bg-[#151928]">
             <span className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Message Composer</span>
             <div className="flex items-center gap-2">
@@ -408,8 +436,24 @@ export const WebSocketTester: React.FC<WebSocketTesterProps> = ({
           </div>
         </div>
 
+        {/* Resizable Splitter */}
+        <PaneSplitter
+          layoutMode={layoutMode}
+          ratio={splitRatio}
+          onChange={handleRatioChange}
+          onReset={() => handleRatioChange(42)}
+          containerRef={splitContainerRef}
+        />
+
         {/* Right: Live Message Stream */}
-        <div className="flex-1 flex flex-col bg-[#0b0d14]">
+        <div
+          style={{
+            flex: '1 1 0%',
+            minWidth: layoutMode === 'columns' ? '200px' : 0,
+            minHeight: layoutMode === 'rows' ? '140px' : 0
+          }}
+          className="flex flex-col bg-[#0b0d14] overflow-hidden"
+        >
           {/* Filter & Toolbar */}
           <div className="p-2.5 border-b border-white/10 bg-[#121622] flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">

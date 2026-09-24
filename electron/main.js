@@ -336,6 +336,17 @@ function createWindow() {
     {
       label: 'View',
       submenu: [
+        {
+          label: 'Toggle Side-by-Side / Stacked Layout',
+          accelerator: 'CmdOrCtrl+Alt+L',
+          click: () => sendMenuAction('toggle-layout')
+        },
+        {
+          label: 'Reset Split Panes (50:50)',
+          accelerator: 'CmdOrCtrl+Alt+0',
+          click: () => sendMenuAction('reset-split')
+        },
+        { type: 'separator' },
         { role: 'reload' },
         { role: 'forceReload' },
         { role: 'toggleDevTools' },

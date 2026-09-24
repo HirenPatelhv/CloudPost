@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
   Workspace, 
   Collection, 
@@ -30,6 +30,7 @@ import { TabsBar } from './components/TabsBar';
 import { ShieldAlert, LogIn, Plus, FolderPlus, Layers } from 'lucide-react';
 import { RequestBuilder } from './components/RequestBuilder/RequestBuilder';
 import { ResponseViewer } from './components/ResponseViewer/ResponseViewer';
+import { PaneSplitter } from './components/Common/PaneSplitter';
 import { CollectionRunner } from './components/CollectionRunner/CollectionRunner';
 import { ArchitectureAndSchemaView } from './components/Architecture/ArchitectureAndSchemaView';
 import { ShareModal } from './components/Workspaces/ShareModal';
@@ -243,6 +244,44 @@ export default function App() {
     } catch (e) {}
     return 'columns';
   });
+
+  const [splitRatioColumns, setSplitRatioColumns] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('cp_split_ratio_cols');
+      if (saved) {
+        const val = parseFloat(saved);
+        if (!isNaN(val) && val >= 18 && val <= 82) return val;
+      }
+    } catch (e) {}
+    return 50;
+  });
+
+  const [splitRatioRows, setSplitRatioRows] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('cp_split_ratio_rows');
+      if (saved) {
+        const val = parseFloat(saved);
+        if (!isNaN(val) && val >= 18 && val <= 82) return val;
+      }
+    } catch (e) {}
+    return 50;
+  });
+
+  const requestPaneContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const handleSplitRatioChange = (newRatio: number) => {
+    if (layoutMode === 'columns') {
+      setSplitRatioColumns(newRatio);
+      try { localStorage.setItem('cp_split_ratio_cols', String(newRatio)); } catch (e) {}
+    } else {
+      setSplitRatioRows(newRatio);
+      try { localStorage.setItem('cp_split_ratio_rows', String(newRatio)); } catch (e) {}
+    }
+  };
+
+  const handleResetSplitRatio = () => {
+    handleSplitRatioChange(50);
+  };
 
   const handleToggleLayout = () => {
     setLayoutMode(prev => {
@@ -1352,6 +1391,12 @@ export default function App() {
           case 'close-tab':
             if (activeTabId) handleCloseTab(activeTabId);
             break;
+          case 'toggle-layout':
+            handleToggleLayout();
+            break;
+          case 'reset-split':
+            handleResetSplitRatio();
+            break;
           default:
             break;
         }
@@ -2295,13 +2340,24 @@ export default function App() {
             )}
 
             {activeTab.type === 'request' && activeRequestObj && (
-              <div className={`h-full flex ${layoutMode === 'columns' ? 'flex-row' : 'flex-col'} overflow-hidden min-w-0`}>
+              <div
+                ref={requestPaneContainerRef}
+                className={`h-full flex ${layoutMode === 'columns' ? 'flex-row' : 'flex-col'} overflow-hidden min-w-0`}
+              >
                 {/* Request Builder Pane */}
-                <div className={`overflow-hidden flex flex-col min-w-0 ${
-                  layoutMode === 'columns'
-                    ? 'flex-1 w-1/2 border-r border-white/10 h-full'
-                    : 'flex-1 h-1/2 min-h-[320px] border-b border-white/10'
-                }`}>
+                <div
+                  style={{
+                    flex: 'none',
+                    ...(layoutMode === 'columns'
+                      ? { width: `${splitRatioColumns}%`, height: '100%' }
+                      : { height: `${splitRatioRows}%`, width: '100%' })
+                  }}
+                  className={`overflow-hidden flex flex-col min-w-0 bg-[#0c0e15] ${
+                    layoutMode === 'columns'
+                      ? 'min-w-[280px] max-w-[calc(100%-200px)]'
+                      : 'min-h-[180px] max-h-[calc(100%-140px)]'
+                  }`}
+                >
                   <RequestBuilder
                     key={activeRequestObj.id}
                     request={activeRequestObj}
@@ -2321,12 +2377,25 @@ export default function App() {
                   />
                 </div>
 
+                {/* Resizable Interactive Splitter with Stacked / Side-by-Side Toggle */}
+                <PaneSplitter
+                  layoutMode={layoutMode}
+                  ratio={layoutMode === 'columns' ? splitRatioColumns : splitRatioRows}
+                  onChange={handleSplitRatioChange}
+                  onToggleLayout={handleToggleLayout}
+                  onReset={handleResetSplitRatio}
+                  containerRef={requestPaneContainerRef}
+                />
+
                 {/* Response Inspector Pane */}
-                <div className={`overflow-hidden flex flex-col min-w-0 ${
-                  layoutMode === 'columns'
-                    ? 'flex-1 w-1/2 h-full'
-                    : 'flex-1 h-1/2 min-h-[260px]'
-                }`}>
+                <div
+                  style={{
+                    flex: '1 1 0%',
+                    minWidth: layoutMode === 'columns' ? '200px' : 0,
+                    minHeight: layoutMode === 'rows' ? '140px' : 0
+                  }}
+                  className="overflow-hidden flex flex-col min-w-0 h-full bg-[#0c0e15]"
+                >
                   <ResponseViewer
                     response={activeResponse}
                     activeRequest={activeRequestObj}

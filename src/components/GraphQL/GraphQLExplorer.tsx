@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   Code2, 
   Play, 
@@ -16,6 +16,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { KeyValueItem } from '../../types';
+import { PaneSplitter } from '../Common/PaneSplitter';
 
 interface GraphQLExplorerProps {
   initialUrl?: string;
@@ -78,6 +79,22 @@ export const GraphQLExplorer: React.FC<GraphQLExplorerProps> = ({
   const [schemaTypes, setSchemaTypes] = useState<any[]>([]);
   const [showSchemaDrawer, setShowSchemaDrawer] = useState(false);
   const [copied, setCopied] = useState(false);
+  const splitContainerRef = useRef<HTMLDivElement | null>(null);
+  const [splitRatio, setSplitRatio] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('cp_gql_split_ratio');
+      if (saved) {
+        const val = parseFloat(saved);
+        if (!isNaN(val) && val >= 18 && val <= 82) return val;
+      }
+    } catch (e) {}
+    return 50;
+  });
+
+  const handleRatioChange = (val: number) => {
+    setSplitRatio(val);
+    try { localStorage.setItem('cp_gql_split_ratio', String(val)); } catch (e) {}
+  };
 
   const handleExecute = async () => {
     if (!url.trim()) {
@@ -263,13 +280,24 @@ export const GraphQLExplorer: React.FC<GraphQLExplorerProps> = ({
       </div>
 
       {/* Main Split: Left Editor, Right Response */}
-      <div className={`flex-1 flex ${layoutMode === 'rows' ? 'flex-col' : 'flex-row'} overflow-hidden min-w-0`}>
+      <div
+        ref={splitContainerRef}
+        className={`flex-1 flex ${layoutMode === 'rows' ? 'flex-col' : 'flex-row'} overflow-hidden min-w-0`}
+      >
         {/* Left: Query & Variables Editor */}
-        <div className={`overflow-hidden flex flex-col bg-[#0e101a] min-w-0 ${
-          layoutMode === 'rows'
-            ? 'w-full h-1/2 min-h-[260px] border-b border-white/10'
-            : 'w-full md:w-1/2 border-r border-white/10 h-full'
-        }`}>
+        <div
+          style={{
+            flex: 'none',
+            ...(layoutMode === 'rows'
+              ? { height: `${splitRatio}%`, width: '100%' }
+              : { width: `${splitRatio}%`, height: '100%' })
+          }}
+          className={`overflow-hidden flex flex-col bg-[#0e101a] min-w-0 ${
+            layoutMode === 'rows'
+              ? 'min-h-[180px] max-h-[calc(100%-140px)]'
+              : 'min-w-[260px] max-w-[calc(100%-200px)]'
+          }`}
+        >
           {/* Sub tabs: Query vs Variables vs Headers */}
           <div className="px-3 border-b border-white/10 bg-[#121624] flex items-center justify-between">
             <div className="flex items-center gap-1">
@@ -368,8 +396,24 @@ export const GraphQLExplorer: React.FC<GraphQLExplorerProps> = ({
           </div>
         </div>
 
+        {/* Resizable Splitter */}
+        <PaneSplitter
+          layoutMode={layoutMode}
+          ratio={splitRatio}
+          onChange={handleRatioChange}
+          onReset={() => handleRatioChange(50)}
+          containerRef={splitContainerRef}
+        />
+
         {/* Right: Response Output */}
-        <div className="flex-1 flex flex-col bg-[#07080e]">
+        <div
+          style={{
+            flex: '1 1 0%',
+            minWidth: layoutMode === 'columns' ? '200px' : 0,
+            minHeight: layoutMode === 'rows' ? '140px' : 0
+          }}
+          className="flex flex-col bg-[#07080e] overflow-hidden"
+        >
           {/* Response metrics bar */}
           <div className="p-2.5 border-b border-white/10 bg-[#101320] flex items-center justify-between text-xs">
             <div className="flex items-center gap-3">
